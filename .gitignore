@@ -1,0 +1,12 @@
+.idea
+.vscode
+.DS_Store
+
+**/.idea
+**/.vscode
+**/.DS_Store
+
+**/yarn.lock
+
+# Project exclude paths
+/server/node_modules/
