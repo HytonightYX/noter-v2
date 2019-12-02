@@ -1,0 +1,70 @@
+.g-find {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+
+  .note-list {
+    max-width: 800px;
+    width: 800px;
+    margin-right: 50px;
+
+    .note-card {
+      display: flex;
+      flex-direction: row;
+      background: #ffffff;
+      width: 100%;
+      height: 200px;
+      margin-bottom: 15px;
+
+      .card-image {
+        width: 400px;
+        overflow: hidden;
+
+        img {
+          height: 200px;
+        }
+      }
+
+      .card-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 30px;
+
+        .note-title {
+          font-weight: 600;
+          font-size: 20px;
+          line-height: 1.4285em;
+
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+        }
+
+        .note-attr {
+          .user {
+            .user-icon img {
+              width: 36px;
+              height: 36px;
+              margin: 0 10px;
+              border-radius: 36px;
+            }
+          }
+
+          .like {
+
+          }
+        }
+
+      }
+
+
+    }
+  }
+
+  .right-bar {
+    width: 252px;
+    height: 500px;
+    background: #8e8787;
+  }
+}

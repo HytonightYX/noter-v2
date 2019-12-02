@@ -1,25 +1,35 @@
-import React from 'react'
-import './App.css'
+import React, { lazy } from 'react'
+import { HashRouter as Router, Route, Switch } from 'react-router-dom'
+import { Button } from 'semantic-ui-react'
+import NavWrapper from './component/NavWrapper'
+import FixedBar from './component/FixedBar'
+import 'semantic-ui-css/semantic.min.css'
+import './style/global.less'
 
-function App() {
-	return (
-		<div className="App">
-			<header className="App-header">
-				<img src={logo} className="App-logo" alt="logo"/>
-				<p>
-					Edit <code>src/App.js</code> and save to reload.
-				</p>
-				<a
-					className="App-link"
-					href="https://reactjs.org"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					Learn React
-				</a>
-			</header>
-		</div>
-	)
+import Find from './page/find'
+
+class App extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+
+	render() {
+		return (
+			<Router>
+				<div className='app-root'>
+					<NavWrapper/>
+
+					<div className="g-content">
+						<Switch>
+							<Route exact path='/' component={Find}/>
+							<Route exact path='/find' component={Find}/>
+						</Switch>
+					</div>
+					<FixedBar/>
+				</div>
+			</Router>
+		)
+	}
 }
 
 export default App
