@@ -20,3 +20,4 @@ if (global.config.env === 'dev') {
 app.listen(3030, () => {
 	console.log('PORT has opened on 3030')
 })
+
