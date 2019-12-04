@@ -21,39 +21,54 @@ class User extends Model {
 		return user
 	}
 
-	static async getUserByOpenId(openid) {
-		return await User.findOne({where:{openid: openid}})
+	static async getUserByGithubId(githubId) {
+		return await User.findOne({where:{github_id: githubId}})
 	}
 
-	static async registerByOpenId(openid) {
-		return await User.create({openid: openid})
+	static async registerByGithubId(githubId) {
+		return await User.create({github_id: githubId})
 	}
 }
 
 User.init({
+	// 记录ID
 	id: {
 		type: Sequelize.INTEGER,
 		primaryKey: true,
 		autoIncrement: true
 	},
-	nickname: Sequelize.STRING(32),
+	// 用户名
+	userName: Sequelize.STRING(64),
+	// 邮箱
 	email: {
 		type: Sequelize.STRING, // 最大长度
 		unique: true,               // 唯一
 	},
+	// 密码
 	password: {
 		// 观察者模式
-		type: Sequelize.STRING,
+		type: Sequelize.STRING(128),
 		set(val) {
 			const salt = bcryptjs.genSaltSync(10) // 10 表示生成盐的成本,越高越安全
 			const hashPassword = bcryptjs.hashSync(val, salt)
 			this.setDataValue('password', hashPassword) // this 代表User类
 		}
 	},
-	openid: {
-		type: Sequelize.STRING(64), // 最大长度
-		unique: true,               // 唯一
-	}
+	// GitHubId
+	githubId: {
+		type: Sequelize.INTEGER,
+		unique: true, // 唯一
+	},
+	// 真实姓名
+	realName: Sequelize.STRING(64),
+	// 性别
+	sex: Sequelize.INTEGER,
+	// 邮箱
+	email: Sequelize.STRING(255),
+	// 专长
+	expertise: Sequelize.STRING(255),
+	// 简介
+	desc: Sequelize.STRING(255)
 }, {
 	sequelize: db,
 	tableName: 'user'
