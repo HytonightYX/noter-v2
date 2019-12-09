@@ -1,6 +1,7 @@
 const {LinValidator, Rule} = require('../../core/lin-validator-v2')
 const {User} = require('../models/user')
 const {LoginType, ArtType} = require('../lib/enum')
+const {Note} = require('../models/note')
 
 class PositiveIntegerValidator extends LinValidator {
 	constructor() {
@@ -22,7 +23,7 @@ class RegisterValidator extends LinValidator {
 			new Rule('matches', '密码至少1个大写字母，1个小写字母和1个数字', /^[\w_-]{6,16}$/)
 		]
 		this.password2 = this.password1
-		this.nickname = [
+		this.username = [
 			new Rule('isLength', '昵称长度为4~32字符', {min: 4, max: 32})
 		]
 	}
@@ -149,6 +150,71 @@ class SearchValidator extends LinValidator {
 }
 
 /**
+ * 新增文章校验
+ */
+class AddNoteValidator extends PositiveIntegerValidator {
+	constructor() {
+		super()
+		this.title = [
+			new Rule('isLength', '文章标题须在1-32个字符之间', {min:1, max:32})
+		]
+		this.tag = [
+			new Rule('isInt', '需要正整数', {min: 1})
+		]
+		this.status = [
+			new Rule('isInt', '需要正整数且为1或2', {min:1, max:2})
+		]
+	}
+	/**
+	 * 校验用户文章是否与自己之前的文章标题重复
+	 * @param vals 
+	 */
+	async validatePersonalNote(vals) {
+		const title = vals.body.title
+		const writerId = vals.body.writerId
+		const note = await Note.findOne({
+			where: {
+				title: title,
+				writerId: writerId,
+				deletedAt: null
+			}
+		})
+		if (note) {
+			throw new Error('与您之前某篇文章标题重复,请换个标题或重新编辑之前的文章')
+		}
+	}
+}
+
+/**
+ * 发布文章，即将文章状态从草稿改为发布
+ */
+class PublishNoteValidator extends PositiveIntegerValidator {
+	constructor() {
+		super()
+	}
+	// 这样写主要还是防止他人直接通过id来更改状态,所以校验id与作者id是否匹配
+	async validateNote(vals) {
+		const id = vals.body.id
+		const writerId = vals.body.writerId
+		const note = await Note.findOne({
+			id: id,
+			writerId: writerId
+		})
+		if (!note) {
+			throw new Error('系统异常，需要发布的文章与当前用户不匹配')
+		} else if (!(note.raw && note.html)) {
+			throw new Error('不可文章内容不得为空')
+		}
+	}
+}
+
+class NoteValidator extends LinValidator {
+	constructor() {
+		super()
+	}
+}
+
+/**
  * loginType 检查
  * @param vals
  */
@@ -187,4 +253,7 @@ module.exports = {
 	ClassicValidator,
 	SearchValidator,
 	AddShortCommentValidator,
+	AddNoteValidator,
+	PublishNoteValidator,
+	NoteValidator,
 }

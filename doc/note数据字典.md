@@ -17,9 +17,11 @@
 | :--------: | :---: | :----: | :--------: | :--------:|
 |id|int|记录id|Primary_Key(id)|  |
 |title|varchar(255)|标题| |  |
-|content|text|内容| | 存H5标签 |
-|images|varchar(500)|图片路径| | 图片存路径，多张图片路径用;分隔 |
+|raw|text|json内容| | 存json |
+|html|text|h5内容| | 存H5标签 |
 |writer_id|int|作者id| Foreign_Key(user) | |
+|tag|int|文章类型| | |
+|status|int| 状态 | | 1-草稿;2-发布 |
 
 ## like表
 |字段名|类型|含义|约束|备注|
@@ -30,7 +32,7 @@
 
 ## collection
 |字段名|类型|含义|约束|备注|
-| :--------: | :---: | :----: | :--------: | :--------:|
+| :--------: | :---: | :----: | :--------: | :--------: |
 | id | int | 记录id | Primary_Key(id) | |
 | user_id | int | 用户id| Foreign_Key(user)| |
 | note_id | int | 笔记文章id | Foreign_Key(note) |
