@@ -1,13 +1,15 @@
 const Koa = require('koa')
+const cors = require('@koa/cors')
 const InitManager = require('./core/init')
 const bodyParser = require('koa-bodyparser')
-const app = new Koa()
 const catchError = require('./middlewares/exception')
+const app = new Koa()
 
 require('./app/models/user')
 require('./app/models/classic')
 require('./app/models/flow')
 
+app.use(cors())
 app.use(bodyParser())
 app.use(catchError)
 
