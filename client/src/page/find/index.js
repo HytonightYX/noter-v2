@@ -53,7 +53,10 @@ class Find extends React.Component {
 
 				<div className="right-bar">
 
+					</div>
 				</div>
+
+				<FixedBar/>
 			</div>
 		)
 	}

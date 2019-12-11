@@ -1,12 +1,13 @@
 import React, { lazy } from 'react'
 import { HashRouter as Router, Route, Switch } from 'react-router-dom'
-import { Button } from 'semantic-ui-react'
 import NavWrapper from './component/NavWrapper'
 import FixedBar from './component/FixedBar'
+
 import 'semantic-ui-css/semantic.min.css'
 import './style/global.less'
 
 import Find from './page/find'
+import Write from './page/write'
 
 class App extends React.Component {
 	constructor(props) {
@@ -23,9 +24,10 @@ class App extends React.Component {
 						<Switch>
 							<Route exact path='/' component={Find}/>
 							<Route exact path='/find' component={Find}/>
+							<Route exact path='/write' component={Write}/>
 						</Switch>
 					</div>
-					<FixedBar/>
+
 				</div>
 			</Router>
 		)
