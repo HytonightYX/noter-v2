@@ -12,7 +12,7 @@ class Note extends Model {
             title: this.title,
             raw: this.raw,
             html: this.html,
-            writerId: this.writerId,
+            author: this.writerId,
             tag: this.tag
         };
         return origin;
@@ -23,19 +23,18 @@ class Note extends Model {
      * @param title 文章标题
      * @param raw  文章内容json
      * @param html 文章内容html
-     * @param writerId 作者id
+     * @param author 作者id
      * @param tag 文章类型
      * @param status 1-草稿，2-发布
      */
-    static async addNote(title, raw, html, writerId, tag, status) {
+    static async addNote(note) {
         return await Note.create({
-            title: title,
-            raw: raw,
-            html: html,
-            writerId: writerId,
-            tag: tag,
-            status: status
+            ...note
         })
+    }
+
+    static async showAllNotes() {
+        return await Note.findAll()
     }
 
     static async queryNoteByTitle(title) {
@@ -64,9 +63,9 @@ Note.init({
     // html内容
     html: Sequelize.TEXT,
     // 作者Id
-    writerId: Sequelize.INTEGER,
+    author: Sequelize.INTEGER,
     // 文章类型
-    tag: Sequelize.INTEGER,
+    tag: Sequelize.STRING(100),
     // 所处状态
     status: {
         type: Sequelize.INTEGER,

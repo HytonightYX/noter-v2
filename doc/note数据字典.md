@@ -19,8 +19,8 @@
 |title|varchar(255)|标题| |  |
 |raw|text|json内容| | 存json |
 |html|text|h5内容| | 存H5标签 |
-|writer_id|int|作者id| Foreign_Key(user) | |
-|tag|int|文章类型| | |
+|author|int|作者id| Foreign_Key(user) | |
+|tag|varchar(100)|文章类型| | TAG序号数组,比如1,2,3对应TAG表1,2,3 |
 |status|int| 状态 | | 1-草稿;2-发布 |
 
 ## like表
@@ -29,6 +29,14 @@
 | id | int | 记录id | Primary_Key(id) | |
 | user_id | int | 用户id| Foreign_Key(user)| |
 | note_id | int | 笔记文章id | Foreign_Key(note) |
+
+## TAG表
+|字段名|类型|含义|约束|备注|
+| :--------: | :---: | :----: | :--------: | :--------:|
+| id | int | 记录id | Primary_Key(id) | |
+| name | varchar(100) | TAG名称 | | |
+| author | int | 用户id | Foreign_Key | 0-管理员,其他-用户(不加载) |
+
 
 ## collection
 |字段名|类型|含义|约束|备注|

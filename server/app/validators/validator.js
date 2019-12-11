@@ -2,6 +2,7 @@ const {LinValidator, Rule} = require('../../core/lin-validator-v2')
 const {User} = require('../models/user')
 const {LoginType, ArtType} = require('../lib/enum')
 const {Note} = require('../models/note')
+const {Tag} = require('../models/tag')
 
 class PositiveIntegerValidator extends LinValidator {
 	constructor() {
@@ -159,7 +160,7 @@ class AddNoteValidator extends PositiveIntegerValidator {
 			new Rule('isLength', '文章标题须在1-32个字符之间', {min:1, max:32})
 		]
 		this.tag = [
-			new Rule('isInt', '需要正整数', {min: 1})
+			new Rule('isLength', '需要TagsID序列', {min: 1, max: 50})
 		]
 		this.status = [
 			new Rule('isInt', '需要正整数且为1或2', {min:1, max:2})
@@ -171,11 +172,11 @@ class AddNoteValidator extends PositiveIntegerValidator {
 	 */
 	async validatePersonalNote(vals) {
 		const title = vals.body.title
-		const writerId = vals.body.writerId
+		const author = vals.body.author
 		const note = await Note.findOne({
 			where: {
 				title: title,
-				writerId: writerId,
+				author: author,
 				deletedAt: null
 			}
 		})
@@ -211,6 +212,23 @@ class PublishNoteValidator extends PositiveIntegerValidator {
 class NoteValidator extends LinValidator {
 	constructor() {
 		super()
+	}
+}
+
+class TagsValidator extends LinValidator {
+	constructor() {
+		super()
+	}
+	async validateTag(vals) {
+		const name = vals.body.name
+		const tag = await Tag.findOne({
+			where: {
+				name: name
+			}
+		})
+		if (tag) {
+			throw new Error("此Tag已存在")
+		}
 	}
 }
 
