@@ -23,8 +23,8 @@
     "semantic-ui-react": "^0.88.1"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
+    "start": "react-app-rewired start NODE_ENV=dev",
+    "build": "react-app-rewired build NODE_ENV=prod",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },

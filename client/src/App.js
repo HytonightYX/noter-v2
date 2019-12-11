@@ -8,6 +8,7 @@ import './style/global.less'
 
 import Find from './page/find'
 import Write from './page/write'
+import Note from './page/note'
 
 class App extends React.Component {
 	constructor(props) {
@@ -25,6 +26,7 @@ class App extends React.Component {
 							<Route exact path='/' component={Find}/>
 							<Route exact path='/find' component={Find}/>
 							<Route exact path='/write' component={Write}/>
+							<Route exact path='/note' component={Note}/>
 						</Switch>
 					</div>
 

@@ -1,8 +1,8 @@
 import React from 'react'
 import './style.less'
-import { Icon } from 'semantic-ui-react'
 import ICON from '../../asset/icon'
 import FixedBar from '../../component/FixedBar'
+import { axios_get, axios_post } from '../../util/axios'
 
 const FIND_MENU = [
 	{title: '所有', key: 'all', icon: ''},
@@ -12,11 +12,14 @@ const FIND_MENU = [
 
 class Find extends React.Component {
 	state = {
-		currtab: 'all' // all || follow || hot
+		currtab: 'all', // all || follow || hot
+		currNotes: [],
+		loading: false
 	}
 
-	componentDidMount() {
-
+	async componentDidMount() {
+		const data = await axios_get('v1/book/test', {})
+		console.log('前端拿到的数据:', data)
 	}
 
 	doChangeTab = (e) => {
