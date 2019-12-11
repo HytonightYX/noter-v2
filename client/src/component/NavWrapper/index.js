@@ -1,10 +1,31 @@
+import { Dropdown, Menu as AntMenu } from 'antd'
 import React, { useState } from 'react'
 import { withRouter } from 'react-router'
-import { Icon, Menu, Segment } from 'semantic-ui-react'
+import { Icon, Menu } from 'semantic-ui-react'
 
 import { MENU_MAIN } from '../../constant/config'
 import { Link } from 'react-router-dom'
 import './style.less'
+
+const menu = (
+	<AntMenu>
+		<AntMenu.Item>
+			<Link to='/profile'>
+				<div>个人主页</div>
+			</Link>
+		</AntMenu.Item>
+		<AntMenu.Item>
+			<a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
+				账号设置
+			</a>
+		</AntMenu.Item>
+		<AntMenu.Item>
+			<a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
+				退出登录
+			</a>
+		</AntMenu.Item>
+	</AntMenu>
+)
 
 export default withRouter(({location}) => {
 	return (
@@ -25,13 +46,22 @@ export default withRouter(({location}) => {
 				</Menu>
 
 				<div className="nav-right">
-					<div className="user-icon">
-						<img src="https://cdn.sspai.com/2019/09/24/8edfbb9b9780595e2977e095c1ee128a.png?imageMogr2/quality/95/thumbnail/!72x72r/gravity/Center/crop/72x72/interlace/1" alt=""/>
-					</div>
-
 					<div>
 						<Icon className="m-icon" name="search"/>
 					</div>
+
+					<Dropdown
+						overlay={menu}
+						placement="bottomCenter"
+						// visible={true}
+						overlayClassName="m-header-dropdown"
+					>
+						<div className="user-icon">
+							<img
+								src="https://cdn.sspai.com/2019/09/24/8edfbb9b9780595e2977e095c1ee128a.png?imageMogr2/quality/95/thumbnail/!72x72r/gravity/Center/crop/72x72/interlace/1"
+								alt=""/>
+						</div>
+					</Dropdown>
 				</div>
 			</div>
 		</div>
