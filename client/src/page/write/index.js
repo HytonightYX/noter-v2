@@ -76,8 +76,23 @@ class Write extends React.Component {
 
 		return (
 			<div className="g-write">
-				<Form onSubmit={this.handleSubmit}>
-					<Form.Item>
+				<Form onSubmit={this.handleSubmit} className="m-form">
+
+					<Form.Item style={{marginBottom: 0}}>
+						{getFieldDecorator('title', {
+							rules: [{required: true, message: '请输入标题'}],
+							initialValue: ''
+						})(
+							<div className="upload">
+								<div style={{background: '#666666',width: 600, height: 250, margin: '20px auto 30px'}}>
+
+								</div>
+
+							</div>
+						)}
+					</Form.Item>
+
+					<Form.Item style={{marginBottom: 0}}>
 						{getFieldDecorator('title', {
 							rules: [{required: true, message: '请输入标题'}],
 							initialValue: ''
