@@ -18,8 +18,8 @@ class Find extends React.Component {
 	}
 
 	async componentDidMount() {
-		const data = await axios_get('v1/book/test', {})
-		console.log('前端拿到的数据:', data)
+		const data = await axios_get('v1/book/getAllNotes', {})
+		this.setState({currNotes: data})
 	}
 
 	doChangeTab = (e) => {
