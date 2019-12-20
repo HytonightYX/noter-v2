@@ -1,8 +1,9 @@
 const Router = require('koa-router')
 const router = new Router({prefix: '/v1/user'})
 const {User} = require('../../models/user')
-const {RegisterValidator} = require('../../validators/validator')
+const {RegisterValidator, UserModifyValidator} = require('../../validators/validator')
 const {success} = require('../../lib/helper')
+const {Auth} = require('../../../middlewares/auth')
 
 /**
  * 注册功能
@@ -18,5 +19,27 @@ router.post('/register', async (ctx, next) => {
 	const r = await User.create(user)
 	success()
 })
+
+/**
+ * 获取用户信息
+ */
+router.get('/info', new Auth().m, async ctx => {
+	const user = await User.getUserInfo(ctx.auth.id)
+	return {
+		code: 201,
+		data: user,
+		msg: 'ok'
+	} 
+})
+
+/**
+ * 用户信息编辑
+ */
+router.post('/modify', new Auth().m, async ctx => {
+	const v = await new UserModifyValidator().validate(ctx)
+	await User.modifyInfo(v.get('body'), ctx.auth.uid)
+	success()
+})
+
 
 module.exports = router

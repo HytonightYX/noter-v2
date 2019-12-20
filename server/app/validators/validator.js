@@ -54,6 +54,30 @@ class RegisterValidator extends LinValidator {
 	}
 }
 
+class UserModifyValidator extends LinValidator {
+	constructor() {
+		super()
+		this.email = [
+			new Rule('isEmail', '邮箱填写不符合规范')
+		]
+		this.userName = [
+			new Rule('isLength', '昵称长度为4~32字符', {min: 4, max: 32})
+		]
+		this.sex = [
+			new Rule('isInt', '性别只有两种', {min: 1, max: 2})
+		]
+	}
+}
+
+class TagAddValidator extends LinValidator {
+	constructor() {
+		super()
+		this.name = [
+			new Rule('isLength', 'TAG名称长度为1~8个字符', {min: 1, max: 8})
+		]
+	}
+}
+
 class TokenValidator extends LinValidator {
 	constructor() {
 		super()
@@ -98,7 +122,7 @@ class NotEmptyValidator extends LinValidator {
 class LikeValidator extends PositiveIntegerValidator {
 	constructor() {
 		super()
-		this.validateType = checkArtType
+		//this.validateType = checkArtType
 	}
 }
 
@@ -153,7 +177,7 @@ class SearchValidator extends LinValidator {
 /**
  * 新增文章校验
  */
-class AddNoteValidator extends PositiveIntegerValidator {
+class AddNoteValidator extends LinValidator {
 	constructor() {
 		super()
 		this.title = [
@@ -274,4 +298,6 @@ module.exports = {
 	AddNoteValidator,
 	PublishNoteValidator,
 	NoteValidator,
+	UserModifyValidator,
+	TagAddValidator,
 }

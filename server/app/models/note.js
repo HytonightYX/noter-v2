@@ -13,7 +13,9 @@ class Note extends Model {
             raw: this.raw,
             html: this.html,
             author: this.writerId,
-            tag: this.tag
+            tag: this.tag,
+            likeNum: this.likeNum,
+            collectNum: this.collectNum
         };
         return origin;
     }
@@ -33,17 +35,68 @@ class Note extends Model {
         })
     }
 
+    /**
+     * 按更新时间降序排序
+     */
     static async showAllNotes() {
-        return await Note.findAll()
+        return await Note.findAll({
+            order: [
+                ['updatedAt', 'DESC']
+            ]
+        })
     }
 
+    /**
+     * 按点赞数目降序排序
+     */
+    static async showLikedNotes() {
+        return await Note.findAll({
+            order: [
+                ['likeNum', 'DESC']
+            ]
+        })
+    }
+
+    /**
+     * 按收藏数目降序排序
+     */
+    static async showCollectedNotes() {
+        return await Note.findAll({
+            order: [
+                ['collectNum', 'DESC']
+            ]
+        })
+    }
+
+    /**
+     * 按标题搜索文章（模糊查询），按更新时间降序排序
+     * @param title 
+     */
     static async queryNoteByTitle(title) {
         return await Note.findAll({
             where: {
                 title: {
                     [Op.like]: `%${title}%`
-                }
+                },
+                order: [
+                    ['updatedAt', 'DESC']
+                ]
             }
+        })
+    }
+
+    /**
+     * 查询用户所有文章，降序排序
+     * @param {*用户ID} id 
+     */
+    static async queryNoteById(id) {
+        return await Note.findAll({
+            where: {
+                author: id
+            },
+            order: [
+                ['updatedAt', 'DESC']
+            ]
         })
     }
 
@@ -66,6 +119,16 @@ Note.init({
     author: Sequelize.INTEGER,
     // 文章类型
     tag: Sequelize.STRING(100),
+    // 点赞数量
+    likeNum: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+    },
+    // 收藏数量
+    collectNum: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+    },
     // 所处状态
     status: {
         type: Sequelize.INTEGER,

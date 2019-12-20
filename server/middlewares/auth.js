@@ -30,7 +30,6 @@ class Auth {
 
 			try {
 				decode = jwt.verify(userToken.name, global.config.security.secretKey)
-				console.log(decode)
 			} catch (error) {
 				// 令牌不合法或者令牌过期
 				if (error.name === 'TokenExpiredError') {
