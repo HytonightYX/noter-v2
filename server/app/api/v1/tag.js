@@ -7,11 +7,7 @@ const {TagAddValidator} = require('../../validators/validator')
 
 router.get('/', async ctx => {
     const tags = await Tag.showTags()
-    ctx.body = {
-        code: 200,
-        data: tags,
-        msg: 'ok'
-    }
+    success('ok', tags)
 })
 
 router.get('/add/:name', new Auth().m ,async ctx => {
@@ -19,6 +15,14 @@ router.get('/add/:name', new Auth().m ,async ctx => {
     const name = v.get('path.name')
     await Tag.addTags(name, ctx.auth.uid)
     success()
+})
+
+/**
+ * 返回所有系统定义tags
+ */
+router.get('/getAllTags', new Auth().m, async ctx => {
+    const tags = await Tag.showTags()
+    success('ok', tags)
 })
 
 module.exports = router

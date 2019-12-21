@@ -1,13 +1,26 @@
 const Router = require('koa-router')
 const router = new Router({prefix: '/v1/note'})
-const {AddNoteValidator, NoteValidator, PublishNoteValidator} = require('../../validators/validator')
+const {AddNoteValidator, NoteValidator, PublishNoteValidator, PositiveIntegerValidator} = require('../../validators/validator')
 const {Note} = require('../../models/note')
 const {Tag} = require('../../models/tag')
 const {success} = require('../../lib/helper')
 const {Auth} = require('../../../middlewares/auth')
+const dayjs = require('dayjs')
+const multer = require('@koa/multer')
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+    cb(null, 'upload/')
+    },
+    filename: function (req, file, cb) {
+        console.log(file)
+        let type = file.originalname.split('.').splice(-1)
+    cb(null, `IMG_${dayjs((new Date())).format('YYYYMMDDhhmmss')}.${type}`)
+    }
+})
+const upload = multer({storage})
 
 /**
- * 新增文章(保存文章草稿和发布同一接口)
+ * 新增文章
  */
 router.post('/add',new Auth().m, async ctx => {
     const id = ctx.auth.uid
@@ -23,11 +36,7 @@ router.post('/add',new Auth().m, async ctx => {
  */
 router.get('/', async ctx => {
     const notes = await Note.showAllNotes()
-    ctx.body = {
-        code: 201,
-        data: notes,
-        msg: "ok"
-    }
+    success('ok', notes)
 })
 
 /**
@@ -35,11 +44,7 @@ router.get('/', async ctx => {
  */
 router.get('/like', async ctx => {
     const notes = await Note.showLikedNotes()
-    ctx.body = {
-        code: 201,
-        data: notes,
-        msg: "ok"
-    }
+    success('ok', notes)
 })
 
 /**
@@ -47,11 +52,7 @@ router.get('/like', async ctx => {
  */
 router.get('/collect', async ctx => {
     const notes = await Note.showCollectedNotes()
-    ctx.body = {
-        code: 201,
-        data: notes,
-        msg: "ok"
-    }
+    success('ok', notes)
 })
 
 router.post('/publish', async ctx => {
@@ -71,24 +72,14 @@ router.get('/getNotesByTitle', async ctx => {
     const v = await new NoteValidator().validate(ctx)
     const notes = await Note.queryNoteByTitle(v.get('path.title'))
     const msg = notes.length ? "success" : "failed"
-    ctx.body = {
-        code: 201,
-        data: notes,
-        msg: msg
-    }
+    success('ok', notes)
 })
 
-/**
- * 返回所有系统定义tags
- */
-router.get('/getAllTags', new Auth().m, async ctx => {
-    const tags = await Tag.showTags()
-    ctx.body = {
-        code: 201,
-        data: tags,
-        msg: "ok"
+router.post('/upload', new Auth().m, upload.single('file'), ctx => {
+    const path = ctx.file.path.replace('\\', '/')
+        success('ok', {path})
     }
-})
+  )
 
 /**
  * 获取当前用户的文章
@@ -100,6 +91,15 @@ router.get('/mine', new Auth().m, async ctx => {
         data: notes,
         msg: "ok"
     }
+})
+
+/**
+ * 删除用户文章接口,同时删除该文章的所有点赞收藏记录
+ */
+router.get('/delete/:id', new Auth().m, async ctx => {
+    const v = await new PositiveIntegerValidator().validate(ctx, {id: 'id'})
+    await Note.deleteNote(v.get('path.id'))
+    success()
 })
 
 module.exports = router
