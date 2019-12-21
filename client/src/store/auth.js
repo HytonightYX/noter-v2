@@ -9,17 +9,18 @@ class AuthStore {
 			() => this.token,
 			token => {
 				if (token) {
-					console.log('在localStorage中设置了jwt '+ token)
+					console.log('SET JWT = '+ token)
 					window.localStorage.setItem('jwt', token)
 				} else {
-					console.log('在localStorage中清除jwt ')
+					console.log('CLEAR JWT = ')
 					window.localStorage.removeItem('jwt')
 				}
 			}
 		)
 	}
 
-	@action setToken(token) {
+	@action
+	setToken(token) {
 		this.token = token
 	}
 }
