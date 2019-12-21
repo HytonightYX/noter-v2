@@ -10,3 +10,4 @@
 
 # Project exclude paths
 /server/node_modules/
+**/.package-lock.json
