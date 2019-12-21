@@ -13,7 +13,10 @@ const {success} = require('../../lib/helper')
  * 公开
  */
 router.get('/test', (ctx, next) => {
-	ctx.body = {test: 'book router ok'}
+	ctx.body = {
+		code: 201,
+		msg: 'book router ok'
+	}
 })
 
 /**

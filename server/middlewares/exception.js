@@ -14,11 +14,10 @@ const catchError = async (ctx, next) => {
 
 		if (error instanceof HttpException) {
 			ctx.body = {
+				code: error.code,
+				data: error.data,
 				message: error.message,
-				error_code: error.errorCode,
-				request: `${ctx.method} ${ctx.path}`
 			}
-			ctx.status = error.code
 		} else {
 			ctx.body = {
 				message: '捕获到未知异常:\n' + error.stack,

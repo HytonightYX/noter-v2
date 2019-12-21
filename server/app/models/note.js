@@ -1,7 +1,6 @@
 const {Sequelize, Model, Op} = require('sequelize')
 const {db} = require('../../core/db')
-
-
+const {Tag} = require('../models/tag')
 class Note extends Model {
     /**
      * 用于JSON序列化
@@ -22,12 +21,6 @@ class Note extends Model {
 
     /**
      * 新增文章,存草稿或者直接发布
-     * @param title 文章标题
-     * @param raw  文章内容json
-     * @param html 文章内容html
-     * @param author 作者id
-     * @param tag 文章类型
-     * @param status 1-草稿，2-发布
      */
     static async addNote(note) {
         return await Note.create({
@@ -39,11 +32,29 @@ class Note extends Model {
      * 按更新时间降序排序
      */
     static async showAllNotes() {
-        return await Note.findAll({
+        let notes = await Note.findAll({
             order: [
                 ['updatedAt', 'DESC']
-            ]
+            ],
+            raw: true
         })
+
+        let tagObj = {}
+
+        await Tag.findAll({raw: true}).map(item => {
+            tagObj[item.id] = item.name
+        })
+
+
+        notes = notes.map(item => {
+            let tags = item.tag.split(',').map(item => {
+                return {id: item, name:tagObj[item]}
+            })
+            item.tags = tags
+            return item
+        })
+
+        return notes
     }
 
     /**
@@ -87,7 +98,7 @@ class Note extends Model {
 
     /**
      * 查询用户所有文章，降序排序
-     * @param {*用户ID} id 
+     * @param id 用户ID 
      */
     static async queryNoteById(id) {
         return await Note.findAll({
@@ -97,6 +108,32 @@ class Note extends Model {
             order: [
                 ['updatedAt', 'DESC']
             ]
+        })
+    }
+
+    /**
+     * 文章的删除操作，同时通过事务删除点赞收藏表中的数据
+     * @param id 用户ID
+     */
+    static async deleteNote(id) {
+        const note = await Note.findByPk(id)
+        if (!note) {
+            throw new global.errs.NotFound('Note is not found!')
+        }
+        // 局部引用、防止循环引用
+        const {Favor} = require('../models/favor')
+        db.transaction(async t => {
+            await note.destroy({
+                force: true,
+                transaction: t
+            })
+            return await Favor.destroy({
+                where: {
+                    artId: id
+                },
+                force: true,
+                transaction: t
+            })
         })
     }
 
