@@ -2,9 +2,9 @@ import { Dropdown, Menu as AntMenu } from 'antd'
 import React, { useState } from 'react'
 import { withRouter } from 'react-router'
 import { Icon, Menu } from 'semantic-ui-react'
-
 import { MENU_MAIN } from '../../constant/config'
 import { Link } from 'react-router-dom'
+import logo from '../../asset/img/logo-nobg-64.png'
 import './style.less'
 
 const menu = (
@@ -32,6 +32,9 @@ export default withRouter(({location}) => {
 		<div className="g-nav-wrapper">
 			<div className="m-nav">
 				<Menu inverted pointing secondary size='large'>
+					<div className="m-logo">
+						<img src={logo} alt=""/>
+					</div>
 					{
 						MENU_MAIN.map(item => (
 							<Link to={item.path} key={item.title}>
