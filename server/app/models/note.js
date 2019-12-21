@@ -1,6 +1,7 @@
 const {Sequelize, Model, Op} = require('sequelize')
 const {db} = require('../../core/db')
 const {Tag} = require('../models/tag')
+
 class Note extends Model {
     /**
      * 用于JSON序列化
@@ -137,6 +138,23 @@ class Note extends Model {
         })
     }
 
+    /**
+     * 更新文章
+     * @param note 文章实体 
+     */
+    static async updateNote(note) {
+        const oldNote = Note.findByPk(note.id)
+        if (!oldNote) {
+            throw new global.errs.NotFound()
+        }
+        Note.update({
+            ...note
+        }, { 
+            where: {
+                id: note.id
+            }
+        })
+    }
 }
 
 Note.init({

@@ -28,7 +28,11 @@ router.post('/', async (ctx) => {
 			throw new global.errs.ParameterException('没有响应的异常处理函数')
 	}
 
-	ctx.body = {token}
+	ctx.body = {
+		code: 200,
+		data: {token},
+		message: null
+	}
 })
 
 /**
@@ -50,7 +54,7 @@ router.post('/verify', async (ctx) => {
  */
 async function emailLogin(account, secret) {
 	const user = await User.verifyEmailPassword(account, secret)
-	return generateToken(user.id, Auth.USER) // Auth.USER = 8
+	return generateToken(user.id, Auth.USER)
 }
 
 module.exports = router

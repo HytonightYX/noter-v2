@@ -194,20 +194,20 @@ class AddNoteValidator extends LinValidator {
 	 * 校验用户文章是否与自己之前的文章标题重复
 	 * @param vals 
 	 */
-	async validatePersonalNote(vals) {
-		const title = vals.body.title
-		const author = vals.body.author
-		const note = await Note.findOne({
-			where: {
-				title: title,
-				author: author,
-				deletedAt: null
-			}
-		})
-		if (note) {
-			throw new Error('与您之前某篇文章标题重复,请换个标题或重新编辑之前的文章')
-		}
-	}
+	// async validatePersonalNote(vals) {
+	// 	const title = vals.body.title
+	// 	const author = vals.body.author
+	// 	const note = await Note.findOne({
+	// 		where: {
+	// 			title: title,
+	// 			author: author,
+	// 			deletedAt: null
+	// 		}
+	// 	})
+	// 	if (note) {
+	// 		throw new Error('与您之前某篇文章标题重复,请换个标题或重新编辑之前的文章')
+	// 	}
+	// }
 }
 
 /**
@@ -236,6 +236,18 @@ class PublishNoteValidator extends PositiveIntegerValidator {
 class NoteValidator extends LinValidator {
 	constructor() {
 		super()
+	}
+}
+
+class NoteUpdateValidator extends PositiveIntegerValidator {
+	constructor() {
+		super()
+		this.title = [
+			new Rule('isLength', '文章标题须在1-32个字符之间', {min:1, max:32})
+		]
+		this.tag = [
+			new Rule('isLength', '需要TagsID序列', {min: 1, max: 50})
+		]
 	}
 }
 
