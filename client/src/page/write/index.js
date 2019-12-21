@@ -1,16 +1,20 @@
+import { computed } from 'mobx'
+import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import { Input } from 'semantic-ui-react'
 import BraftEditor from 'braft-editor'
-import { Form, Input as AntInput, Button, Icon, Select, Spin } from 'antd'
+import { Form, Input as AntInput, Button, Icon, Select, Spin, message } from 'antd'
 import debounce from 'lodash/debounce'
 
 import 'braft-editor/dist/index.css'
 import './style.less'
+import { axios_get, axios_post } from '../../util/axios'
 
 const {Option} = Select
 
-
 @Form.create()
+@inject('authStore')
+@observer
 class Write extends React.Component {
 	constructor(props) {
 		super(props)
@@ -21,7 +25,19 @@ class Write extends React.Component {
 	state = {
 		data: [],
 		value: [],
-		fetching: false
+		fetching: false,
+		submitting: false
+	}
+
+	componentDidMount() {
+		axios_post('token', {
+			account: '18196777756@163.com',
+			secret: '123qwe',
+			type: 101
+		}).then(data => {
+			console.log(data)
+			this.props.authStore.setToken(data.token)
+		})
 	}
 
 	fetchUser = value => {
@@ -56,43 +72,53 @@ class Write extends React.Component {
 		event.preventDefault()
 		this.props.form.validateFields((error, values) => {
 			if (!error) {
+				console.log(values)
 				const submitData = {
 					title: values.title,
 					raw: values.content.toRAW(),
 					html: values.content.toHTML(),
-					tag: ['大一', '高数'],
-					author: 25
+					tag: ['大一', '高数'].join(','),
+					author: 25,
+					status: 2
 				}
-				console.log(JSON.stringify(submitData))
+
+				this.setState({submitting: true})
+				axios_post('note/add', submitData)
+					.then(data => {
+						console.log(data)
+					})
+					.finally(() => {
+						this.setState({submitting: false})
+					})
+			} else {
+				message.error('提交发生错误')
 			}
 		})
-
 	}
 
 	render() {
 		const {getFieldDecorator, getFieldsError, getFieldError, isFieldTouched} = this.props.form
 		const controls = ['bold', 'italic', 'underline', 'text-color', 'separator', 'link', 'separator', 'media']
-		const {fetching, data, value} = this.state
+		const {fetching, data, value, submitting} = this.state
 
 		return (
 			<div className="g-write">
 				<Form onSubmit={this.handleSubmit} className="m-form">
 
 					<Form.Item style={{marginBottom: 0}}>
-						{getFieldDecorator('title', {
-							rules: [{required: true, message: '请输入标题'}],
+						{getFieldDecorator('image', {
+							rules: [{required: false, message: '请上传题图'}],
 							initialValue: ''
 						})(
 							<div className="upload">
-								<div style={{background: '#666666',width: 600, height: 250, margin: '20px auto 30px'}}>
+								<div style={{background: '#666666', width: 600, height: 250, margin: '20px auto 30px'}}>
 
 								</div>
-
 							</div>
 						)}
 					</Form.Item>
 
-					<Form.Item style={{marginBottom: 0}}>
+					<Form.Item style={{marginBottom: 5}}>
 						{getFieldDecorator('title', {
 							rules: [{required: true, message: '请输入标题'}],
 							initialValue: ''
@@ -125,13 +151,14 @@ class Write extends React.Component {
 							/>
 						)}
 					</Form.Item>
+
 					<Form.Item className="m-flex-row">
 						<Select
 							size="large"
 							mode="multiple"
 							labelInValue
 							value={value}
-							placeholder="Select users"
+							placeholder="选择标签..."
 							notFoundContent={fetching ? <Spin size="small"/> : null}
 							filterOption={false}
 							onSearch={this.fetchUser}
@@ -142,13 +169,12 @@ class Write extends React.Component {
 								<Option key={d.value}>{d.text}</Option>
 							))}
 						</Select>
-						<Button size="large" htmlType="submit">提交</Button>
+						<Button size="large" htmlType="submit" loading={submitting}>提交</Button>
 					</Form.Item>
 				</Form>
 			</div>
 		)
 	}
-
 }
 
 export default Write

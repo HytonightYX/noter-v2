@@ -1,7 +1,6 @@
 import React, { lazy } from 'react'
 import { HashRouter as Router, Route, Switch } from 'react-router-dom'
 import NavWrapper from './component/NavWrapper'
-import FixedBar from './component/FixedBar'
 
 import 'semantic-ui-css/semantic.min.css'
 import './style/global.less'
@@ -9,6 +8,7 @@ import './style/global.less'
 import Find from './page/find'
 import Write from './page/write'
 import Note from './page/note'
+import Profile from './page/profile'
 
 class App extends React.Component {
 	constructor(props) {
@@ -27,6 +27,7 @@ class App extends React.Component {
 							<Route exact path='/find' component={Find}/>
 							<Route exact path='/write' component={Write}/>
 							<Route exact path='/note' component={Note}/>
+							<Route exact path='/profile' component={Profile}/>
 						</Switch>
 					</div>
 
