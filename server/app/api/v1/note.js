@@ -7,6 +7,7 @@ const {success} = require('../../lib/helper')
 const {Auth} = require('../../../middlewares/auth')
 const dayjs = require('dayjs')
 const multer = require('@koa/multer')
+// 文件上传中间件
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
     cb(null, 'upload/')
@@ -17,6 +18,7 @@ var storage = multer.diskStorage({
     cb(null, `IMG_${dayjs((new Date())).format('YYYYMMDDhhmmss')}.${type}`)
     }
 })
+// 初始化中间件
 const upload = multer({storage})
 
 /**
@@ -28,7 +30,7 @@ router.post('/add',new Auth().m, async ctx => {
     const v = await new AddNoteValidator().validate(ctx)
     const note = v.get('body')
     await Note.addNote(note)
-    success();
+    success('ok');
 })
 
 /**
@@ -75,6 +77,9 @@ router.get('/getNotesByTitle', async ctx => {
     success('ok', notes)
 })
 
+/**
+ * 文章图片上传接口
+ */
 router.post('/upload', new Auth().m, upload.single('file'), ctx => {
     const path = ctx.file.path.replace('\\', '/')
         success('ok', {path})
@@ -100,6 +105,15 @@ router.get('/delete/:id', new Auth().m, async ctx => {
     const v = await new PositiveIntegerValidator().validate(ctx, {id: 'id'})
     await Note.deleteNote(v.get('path.id'))
     success()
+})
+
+router.post('/update', new Auth().m, async ctx => {
+    const id = ctx.auth.uid
+    ctx.request.body.author = id
+    const v = await new AddNoteValidator().validate(ctx)
+    const newNote = v.get('body')
+    await Note.updateNote(newNote)
+    success('ok');
 })
 
 module.exports = router
