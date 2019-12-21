@@ -1,14 +1,16 @@
 import axios from 'axios'
 import { message } from 'antd'
 import authStore from '../store/index'
+import { encodeJWT } from './token'
 
 const BASE_URL = {
-	development: 'http://127.0.0.1:3030',
+	// development: 'http://127.0.0.1:3030/v1/',
+	development: 'http://172.22.203.70:3030/v1/',
 	production: 'http://yunxi.site:3030'
 }
 
 const axiosIns = axios.create({
-	timeout: 2000,
+	timeout: 200000,
 	baseURL: BASE_URL[process.env.NODE_ENV]
 })
 
@@ -17,14 +19,12 @@ const axiosIns = axios.create({
  */
 axiosIns.interceptors.request.use(
 	config => {
-		console.log('请求拦截器')
-		const token = authStore.token
-		token && (config.headers.Authorization = token)
+		const token = authStore.token || window.localStorage.getItem('jwt')
+		token && (config.headers.Authorization = encodeJWT(token))
 		return config
 	},
 	error => Promise.error(error)
 )
-
 
 /**
  * 响应拦截器
@@ -50,8 +50,9 @@ axiosIns.interceptors.response.use(
 
 			// token或者登陆失效情况下跳转到登录页面
 			if (error.response.status === 401) {
-
+				console.log('token或者登陆失效情况下跳转到登录页面')
 			}
+
 			return Promise.reject(error)
 		} else {
 			console.log(error)
@@ -60,7 +61,7 @@ axiosIns.interceptors.response.use(
 	}
 )
 
-export const axios_get = (url, params, config = {}) => {
+export const axios_get = (url, params = {}, config = {}) => {
 	return new Promise((resolve) => {
 		axiosIns({
 			method: 'get',
@@ -68,9 +69,10 @@ export const axios_get = (url, params, config = {}) => {
 			params,
 			...config
 		}).then(resp_data => {
-			console.log('成功, resp_data', resp_data)
+			resp_data.message && message.success(resp_data.message, 0.7)
 			resolve(resp_data.data)
 		}).catch(error => {
+			message.error(error.message, 0.7)
 			console.log('axios_get:', error)
 		})
 	})
@@ -84,9 +86,10 @@ export const axios_post = (url, data, config = {}) => {
 			data,
 			...config
 		}).then(resp_data => {
-			console.log('成功, resp_data', resp_data)
+			resp_data.message && message.success(resp_data.message, 0.7)
 			resolve(resp_data.data)
 		}).catch(error => {
+			message.error(error, 0.7)
 			console.log('axios_post:', error)
 		})
 	})

@@ -61,6 +61,7 @@
     }
 
     .note-card {
+      flex: 1;
       display: flex;
       flex-direction: row;
       background: #ffffff;
@@ -69,11 +70,12 @@
       margin-bottom: 15px;
 
       .card-image {
-        width: 400px;
+        max-width: 400px;
         overflow: hidden;
 
         img {
-          height: 200px;
+          width: auto;
+          max-height: 200px;
         }
       }
 
@@ -81,6 +83,7 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        flex: 1;
         padding: 30px;
 
         .note-title {
