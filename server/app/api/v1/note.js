@@ -10,15 +10,43 @@ const {Auth} = require('../../../middlewares/auth')
  * 新增文章(保存文章草稿和发布同一接口)
  */
 router.post('/add',new Auth().m, async ctx => {
-    const v = await new AddNoteValidator().validate(ctx, {id: 'author'})
+    const id = ctx.auth.uid
+    ctx.request.body.author = id
+    const v = await new AddNoteValidator().validate(ctx)
     const note = v.get('body')
-    console.log('add', note)
     await Note.addNote(note)
     success();
 })
 
-router.get('/getAllNotes', async ctx => {
+/**
+ * 获取所有文章
+ */
+router.get('/', async ctx => {
     const notes = await Note.showAllNotes()
+    ctx.body = {
+        code: 201,
+        data: notes,
+        msg: "ok"
+    }
+})
+
+/**
+ * 按点赞量降序获取文章
+ */
+router.get('/like', async ctx => {
+    const notes = await Note.showLikedNotes()
+    ctx.body = {
+        code: 201,
+        data: notes,
+        msg: "ok"
+    }
+})
+
+/**
+ * 按收藏量降序获取所有文章
+ */
+router.get('/collect', async ctx => {
+    const notes = await Note.showCollectedNotes()
     ctx.body = {
         code: 201,
         data: notes,
@@ -62,8 +90,16 @@ router.get('/getAllTags', new Auth().m, async ctx => {
     }
 })
 
-router.post('/addTag', new Auth().m, async ctx => {
-    
+/**
+ * 获取当前用户的文章
+ */
+router.get('/mine', new Auth().m, async ctx => {
+    const notes = await Note.queryNoteById(ctx.auth.uid)
+    ctx.body = {
+        code: 201,
+        data: notes,
+        msg: "ok"
+    }
 })
 
 module.exports = router

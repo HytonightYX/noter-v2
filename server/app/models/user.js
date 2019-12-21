@@ -28,6 +28,20 @@ class User extends Model {
 	static async registerByGithubId(githubId) {
 		return await User.create({github_id: githubId})
 	}
+
+	static async getUserInfo(id) {
+		return await User.findOne({where: {id: id}})
+	}
+
+	static async modifyInfo(info, id) {
+		return await User.update({
+			...info
+		}, {
+			where: {
+				id: id
+			}
+		})
+	}
 }
 
 User.init({

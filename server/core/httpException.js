@@ -64,8 +64,35 @@ class LikeError extends HttpException {
 class DislikeError extends HttpException {
 	constructor(message, errorCode) {
 		super()
-		this.message = message || '你已经取消点赞了'
+		this.message = message || '你还没点赞呢'
 		this.errorCode = errorCode || 60002
+		this.code = 400
+	}
+}
+
+class CollectError extends HttpException {
+	constructor(message, errorCode) {
+		super()
+		this.message = message || '你已经收藏过了'
+		this.errorCode = errorCode || 60003
+		this.code = 400
+	}
+}
+
+class CancelCollectError extends HttpException {
+	constructor(message, errorCode) {
+		super()
+		this.message = message || '你还没有收藏呢'
+		this.errorCode = errorCode || 60004
+		this.code = 400
+	}
+}
+
+class TagError extends HttpException {
+	constructor(message, errorcode) {
+		super()
+		this.message = message || '一个用户最多允许自定义10个标签'
+		this.errorCode = errorcode || 70001
 		this.code = 400
 	}
 }
@@ -79,5 +106,8 @@ module.exports = {
 	Forbidden,
 	LikeError,
 	DislikeError,
+	TagError,
+	CollectError,
+	CancelCollectError,
 }
 

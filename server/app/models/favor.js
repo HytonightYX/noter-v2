@@ -1,6 +1,7 @@
 const {db} = require('../../core/db')
 const {Sequelize, Model, Op} = require('sequelize')
 const {Art} = require('../models/art')
+const {Note} = require('../models/note')
 
 
 /**
@@ -18,31 +19,31 @@ class Favor extends Model {
 	 * @param uid
 	 * @returns {Promise<void>}
 	 */
-	static async like(artId, type, uid) {
-		const favor = await Favor.findOne({
-			where: {artId, type, uid}
-		})
+	// static async like(artId, type, uid) {
+	// 	const favor = await Favor.findOne({
+	// 		where: {artId, type, uid}
+	// 	})
 
-		// 当前用户已经点过赞了
-		if (favor) {
-			throw new global.errs.LikeError()
-		}
+	// 	// 当前用户已经点过赞了
+	// 	if (favor) {
+	// 		throw new global.errs.LikeError()
+	// 	}
 
-		// return db.transaction
-		db.transaction(async t => {
-			// 添加记录
-			await Favor.create({
-				artId, type, uid
-			}, {
-				transaction: t
-			})
+	// 	// return db.transaction使用事务
+	// 	db.transaction(async t => {
+	// 		// 添加记录
+	// 		await Favor.create({
+	// 			artId, type, uid
+	// 		}, {
+	// 			transaction: t
+	// 		})
 
-			const art = await Art.getData(artId, type, false)
+	// 		const art = await Art.getData(artId, type, false)
 
-			// 对art实体中的favNums字段进行 +1 操作
-			return await art.increment('favNums', {by: 1, transaction: t})
-		})
-	}
+	// 		// 对art实体中的favNums字段进行 +1 操作
+	// 		return await art.increment('favNums', {by: 1, transaction: t})
+	// 	})
+	// }
 
 	/**
 	 * 取消点赞
@@ -51,31 +52,31 @@ class Favor extends Model {
 	 * @param uid
 	 * @returns {Promise<void>}
 	 */
-	static async dislike(artId, type, uid) {
-		const favor = await Favor.findOne({
-			where: {artId, type, uid}
-		})
+	// static async dislike(artId, type, uid) {
+	// 	const favor = await Favor.findOne({
+	// 		where: {artId, type, uid}
+	// 	})
 
-		// 当前用户还没点过赞,自然不能取消点赞
-		if (!favor) {
-			throw new global.errs.DislikeError()
-		}
+	// 	// 当前用户还没点过赞,自然不能取消点赞
+	// 	if (!favor) {
+	// 		throw new global.errs.DislikeError()
+	// 	}
 
-		// return db.transaction
-		db.transaction(async t => {
-			// 添加记录
-			await favor.destroy({
-				// true 硬删除/false 软删除
-				force: true,
-				transaction: t,
-			})
+	// 	// return db.transaction
+	// 	db.transaction(async t => {
+	// 		// 添加记录
+	// 		await favor.destroy({
+	// 			// true 硬删除/false 软删除
+	// 			force: true,
+	// 			transaction: t,
+	// 		})
 
-			const art = await Art.getData(artId, type, false)
+	// 		const art = await Art.getData(artId, type, false)
 
-			// 对art实体中的favNums字段进行 +1 操作
-			return await art.decrement('favNums', {by: 1, transaction: t})
-		})
-	}
+	// 		// 对art实体中的favNums字段进行 +1 操作
+	// 		return await art.decrement('favNums', {by: 1, transaction: t})
+	// 	})
+	// }
 
 	/**
 	 * 用户是否喜欢该期刊
@@ -137,6 +138,177 @@ class Favor extends Model {
 			likeStatus:myFavor?1:0
 		}
 	}
+
+	/**
+	 * note点赞方法
+	 * @param uid 用户ID
+	 * @param artId 文章ID
+	 */
+	static async like(uid, artId) {
+		const favor = await Favor.findOne({
+			where: {
+				uid: uid,
+				artId: artId,
+				type: 1
+			}
+		})
+		// 如果点赞过了不允许点赞
+		if (favor) {
+			throw new global.errs.LikeError()
+		}
+		// 获取note实体
+		const note = await Note.findOne({
+			where: {
+				author: uid,
+				id: artId
+			}
+		})
+		// note如果不存在直接抛出异常
+		if (!note) {
+			throw new global.errs.NotFound()
+		}
+		// 使用事务，note表点赞量加1同时点赞收藏表新增记录
+		db.transaction(async t => {
+			// 添加记录
+			await Favor.create({
+				artId: artId, 
+				type: 1, 
+				uid: uid
+			}, {
+				transaction: t
+			})
+			// 对note实体中的likeNum字段进行 +1 操作
+			return await note.increment('likeNum', {by: 1, transaction: t})
+		})
+	}
+
+	/**
+	 * 取消点赞的方法
+	 * @param artId 
+	 * @param uid 
+	 */
+	static async dislike(artId, uid) {
+		const favor = await Favor.findOne({
+			where: {
+				artId: artId, 
+				type: 1, 
+				uid: uid
+			}
+		})
+
+		// 当前用户还没点过赞,自然不能取消点赞
+		if (!favor) {
+			throw new global.errs.DislikeError()
+		}
+		// 获取note实体
+		const note = await Note.findOne({
+			where: {
+				author: uid,
+				id: artId
+			}
+		})
+		// note如果不存在直接抛出异常
+		if (!note) {
+			throw new global.errs.NotFound()
+		}
+		// return db.transaction
+		db.transaction(async t => {
+			// 删除记录
+			await favor.destroy({
+				// true 硬删除/false 软删除
+				force: true,
+				transaction: t,
+			})
+			// 对note实体中的likeNum字段进行 -1 操作
+			return await note.decrement('likeNum', {by: 1, transaction: t})
+		})
+	}
+
+	/**
+	 * 收藏文章的方法
+	 * @param uid 用户id
+	 * @param artId 文章id
+	 */
+	static async collect(uid, artId) {
+		const favor = await Favor.findOne({
+			where: {
+				uid: uid,
+				artId: artId,
+				type: 2
+			}
+		})
+		// 如果收藏过了不允许收藏
+		if (favor) {
+			throw new global.errs.CollectError()
+		}
+		// 获取note实体
+		const note = await Note.findOne({
+			where: {
+				author: uid,
+				id: artId
+			}
+		})
+		// note如果不存在直接抛出异常
+		if (!note) {
+			throw new global.errs.NotFound()
+		}
+		// 使用事务，note表点赞量加1同时点赞收藏表新增记录
+		db.transaction(async t => {
+			// 添加记录
+			await Favor.create({
+				artId: artId, 
+				type: 2, 
+				uid: uid
+			}, {
+				transaction: t
+			})
+			// 对note实体中的likeNum字段进行 +1 操作
+			return await note.increment('collectNum', {by: 1, transaction: t})
+		})
+	}
+
+	/**
+	 * 取消收藏的方法
+	 * @param uid 用户id
+	 * @param artId 文章id
+	 */
+	static async cancelCollect(uid, artId) {
+		const favor = await Favor.findOne({
+			where: {
+				artId: artId, 
+				type: 2, 
+				uid: uid
+			}
+		})
+
+		// 当前用户还没点过赞,自然不能取消点赞
+		if (!favor) {
+			throw new global.errs.CancelCollectError()
+		}
+		// 获取note实体
+		const note = await Note.findOne({
+			where: {
+				author: uid,
+				id: artId
+			}
+		})
+		// note如果不存在直接抛出异常
+		if (!note) {
+			throw new global.errs.NotFound()
+		}
+		// return db.transaction
+		db.transaction(async t => {
+			// 删除记录
+			await favor.destroy({
+				// true 硬删除/false 软删除
+				force: true,
+				transaction: t,
+			})
+			// 对note实体中的likeNum字段进行 -1 操作
+			return await note.decrement('collectNum', {by: 1, transaction: t})
+		})
+	}
+
 }
 
 /**
