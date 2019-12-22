@@ -9,3 +9,10 @@ export const FIND_MENU = [
 	{title: '最热', key: 'hot', icon: ''},
 	{title: '标签', key: 'tag', icon: ''},
 ]
+
+export const SYSTEM_CONFIG = {
+	github: {
+		client_id: 'af0e6151dbd9588a9e66',
+		scope: 'user:email'
+	},
+}
