@@ -1,5 +1,5 @@
 import React, { lazy } from 'react'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { Router, Route, Switch } from 'react-router-dom'
 import LoginGuard from './component/LoginGuard'
 import NavWrapper from './component/NavWrapper'
 

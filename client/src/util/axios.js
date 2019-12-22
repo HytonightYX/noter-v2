@@ -31,7 +31,6 @@ axiosIns.interceptors.request.use(
  */
 axiosIns.interceptors.response.use(
 	response => {
-		console.log(response)
 		if (response.data.code === 200) {
 			return Promise.resolve(response.data)
 		} else {
