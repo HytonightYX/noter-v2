@@ -8,6 +8,7 @@
     "babel-plugin-import": "^1.12.2",
     "braft-editor": "^2.3.8",
     "customize-cra": "^0.9.1",
+    "dayjs": "^1.8.18",
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
     "mobx": "^5.15.0",
