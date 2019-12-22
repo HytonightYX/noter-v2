@@ -10,6 +10,7 @@ class UserStore {
 		this.currUser = axios_post('user/login', params)
 	}
 
+	@action
 	logout() {
 		this.currUser = null
 	}
