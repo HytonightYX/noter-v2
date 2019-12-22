@@ -1,4 +1,4 @@
-const {HttpException} = require('../core/httpException')
+const { HttpException } = require('../core/httpException')
 
 const catchError = async (ctx, next) => {
 	try {

@@ -1,7 +1,6 @@
-const {db} = require('../../core/db')
-const {Sequelize, Model, Op} = require('sequelize')
-const {Art} = require('../models/art')
-const {Note} = require('../models/note')
+const { db } = require('../../core/db')
+const { Sequelize, Model, Op } = require('sequelize')
+const { Note } = require('../models/note')
 
 
 /**
@@ -10,38 +9,38 @@ const {Note} = require('../models/note')
  */
 class Favor extends Model {
 
-	/**
-	 * 用户是否喜欢该期刊
-	 * @param artId
-	 * @param type
-	 * @param uid
-	 * @returns {Promise<boolean>}
-	 */
-	static async userLikeIt(artId, type, uid) {
-		const favor = await Favor.findOne({
-			where: {uid, artId, type}
-		})
-		return favor ? true : false
-	}
+	// /**
+	//  * 用户是否喜欢该期刊
+	//  * @param artId
+	//  * @param type
+	//  * @param uid
+	//  * @returns {Promise<boolean>}
+	//  */
+	// static async userLikeIt(artId, type, uid) {
+	// 	const favor = await Favor.findOne({
+	// 		where: { uid, artId, type }
+	// 	})
+	// 	return favor ? true : false
+	// }
 
-	static async getMyClassicFavors(uid) {
-		const arts = await Favor.findAll({
-			where: {
-				uid: uid,
-				type: {
-					// 排除book类型
-					[Op.not]: 400
-				}
-			}
-		})
+	// static async getMyClassicFavors(uid) {
+	// 	const arts = await Favor.findAll({
+	// 		where: {
+	// 			uid: uid,
+	// 			type: {
+	// 				// 排除book类型
+	// 				[Op.not]: 400
+	// 			}
+	// 		}
+	// 	})
 
-		if (!arts) {
-			throw new global.err.NotFound()
-		}
+	// 	if (!arts) {
+	// 		throw new global.err.NotFound()
+	// 	}
 
-		// 禁止循环查询数据库
-		return await Art.getList(arts)
-	}
+	// 	// 禁止循环查询数据库
+	// 	return await Art.getList(arts)
+	// }
 
 	/**
 	 * 获取用户是否喜欢某书籍
@@ -49,7 +48,7 @@ class Favor extends Model {
 	 * @param bookId
 	 * @returns {Promise<{likeStatus: number, favNums: number}>}
 	 */
-	static async getBookFavor(uid, bookId){
+	static async getBookFavor(uid, bookId) {
 		const favorNums = await Favor.count({
 			where: {
 				artId: bookId,
@@ -58,7 +57,7 @@ class Favor extends Model {
 		})
 
 		const myFavor = await Favor.findOne({
-			where:{
+			where: {
 				artId: bookId,
 				uid: uid,
 				type: 400
@@ -66,8 +65,8 @@ class Favor extends Model {
 		})
 
 		return {
-			favNums:favorNums,
-			likeStatus:myFavor?1:0
+			favNums: favorNums,
+			likeStatus: myFavor ? 1 : 0
 		}
 	}
 
@@ -103,14 +102,14 @@ class Favor extends Model {
 		db.transaction(async t => {
 			// 添加记录
 			await Favor.create({
-				artId: artId, 
-				type: 1, 
+				artId: artId,
+				type: 1,
 				uid: uid
 			}, {
 				transaction: t
 			})
 			// 对note实体中的likeNum字段进行 +1 操作
-			return await note.increment('likeNum', {by: 1, transaction: t})
+			return await note.increment('likeNum', { by: 1, transaction: t })
 		})
 	}
 
@@ -122,8 +121,8 @@ class Favor extends Model {
 	static async dislike(artId, uid) {
 		const favor = await Favor.findOne({
 			where: {
-				artId: artId, 
-				type: 1, 
+				artId: artId,
+				type: 1,
 				uid: uid
 			}
 		})
@@ -152,7 +151,7 @@ class Favor extends Model {
 				transaction: t,
 			})
 			// 对note实体中的likeNum字段进行 -1 操作
-			return await note.decrement('likeNum', {by: 1, transaction: t})
+			return await note.decrement('likeNum', { by: 1, transaction: t })
 		})
 	}
 
@@ -188,14 +187,14 @@ class Favor extends Model {
 		db.transaction(async t => {
 			// 添加记录
 			await Favor.create({
-				artId: artId, 
-				type: 2, 
+				artId: artId,
+				type: 2,
 				uid: uid
 			}, {
 				transaction: t
 			})
 			// 对note实体中的likeNum字段进行 +1 操作
-			return await note.increment('collectNum', {by: 1, transaction: t})
+			return await note.increment('collectNum', { by: 1, transaction: t })
 		})
 	}
 
@@ -207,8 +206,8 @@ class Favor extends Model {
 	static async cancelCollect(uid, artId) {
 		const favor = await Favor.findOne({
 			where: {
-				artId: artId, 
-				type: 2, 
+				artId: artId,
+				type: 2,
 				uid: uid
 			}
 		})
@@ -237,7 +236,7 @@ class Favor extends Model {
 				transaction: t,
 			})
 			// 对note实体中的likeNum字段进行 -1 操作
-			return await note.decrement('collectNum', {by: 1, transaction: t})
+			return await note.decrement('collectNum', { by: 1, transaction: t })
 		})
 	}
 

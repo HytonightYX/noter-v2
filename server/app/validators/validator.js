@@ -1,18 +1,24 @@
-const {LinValidator, Rule} = require('../../core/lin-validator-v2')
-const {User} = require('../models/user')
-const {LoginType, ArtType} = require('../lib/enum')
-const {Note} = require('../models/note')
-const {Tag} = require('../models/tag')
+const { LinValidator, Rule } = require('../../core/lin-validator-v2')
+const { User } = require('../models/user')
+const { LoginType, ArtType } = require('../lib/enum')
+const { Note } = require('../models/note')
+const { Tag } = require('../models/tag')
 
+/**
+ * 通用id校验
+ */
 class PositiveIntegerValidator extends LinValidator {
 	constructor() {
 		super()
 		this.id = [
-			new Rule('isInt', '需要正整数', {min: 1})
+			new Rule('isInt', '需要正整数', { min: 1 })
 		]
 	}
 }
 
+/**
+ * 注册校验器
+ */
 class RegisterValidator extends LinValidator {
 	constructor() {
 		super()
@@ -20,15 +26,16 @@ class RegisterValidator extends LinValidator {
 			new Rule('isEmail', '不符合Email规范')
 		]
 		this.password1 = [
-			new Rule('isLength', '密码长度为6~32字符', {min: 6, max: 32}),
+			new Rule('isLength', '密码长度为6~32字符', { min: 6, max: 32 }),
 			new Rule('matches', '密码至少1个大写字母，1个小写字母和1个数字', /^[\w_-]{6,16}$/)
 		]
 		this.password2 = this.password1
 		this.username = [
-			new Rule('isLength', '昵称长度为4~32字符', {min: 4, max: 32})
+			new Rule('isLength', '昵称长度为4~32字符', { min: 4, max: 32 })
 		]
 	}
 
+	// 校验两次密码是否相同方法
 	validatePassword(vals) {
 		const pwd1 = vals.body.password1
 		const pwd2 = vals.body.password2
@@ -54,6 +61,9 @@ class RegisterValidator extends LinValidator {
 	}
 }
 
+/**
+ * 用户编辑校验器
+ */
 class UserModifyValidator extends LinValidator {
 	constructor() {
 		super()
@@ -61,35 +71,42 @@ class UserModifyValidator extends LinValidator {
 			new Rule('isEmail', '邮箱填写不符合规范')
 		]
 		this.userName = [
-			new Rule('isLength', '昵称长度为4~32字符', {min: 4, max: 32})
+			new Rule('isLength', '昵称长度为4~32字符', { min: 4, max: 32 })
 		]
 		this.sex = [
-			new Rule('isInt', '性别只有两种', {min: 1, max: 2})
+			new Rule('isInt', '性别只有两种', { min: 1, max: 2 })
 		]
 	}
 }
 
+/**
+ * 标签添加校验器
+ */
 class TagAddValidator extends LinValidator {
 	constructor() {
 		super()
 		this.name = [
-			new Rule('isLength', 'TAG名称长度为1~8个字符', {min: 1, max: 8})
+			new Rule('isLength', 'TAG名称长度为1~8个字符', { min: 1, max: 8 })
 		]
 	}
 }
 
+/**
+ * 生成token校验器
+ */
 class TokenValidator extends LinValidator {
 	constructor() {
 		super()
 		this.account = [
-			new Rule('isLength', '不符合账号规则', {min: 4, max: 32})
+			new Rule('isLength', '不符合账号规则', { min: 4, max: 32 })
 		]
 		this.secret = [
 			new Rule('isOptional'),
-			new Rule('isLength', '密码至少6个字符!', {min: 6, max: 128})
+			new Rule('isLength', '密码至少6个字符!', { min: 6, max: 128 })
 		]
 	}
 
+	// 校验登录类型
 	validateLoginType(vals) {
 		if (!vals.body.type) {
 			throw new Error('缺少type参数')
@@ -138,13 +155,13 @@ class ClassicValidator extends LikeValidator {
 }
 
 /**
- *
+ * 获取短评校验器
  */
 class AddShortCommentValidator extends PositiveIntegerValidator {
 	constructor() {
 		super()
 		this.content = [
-			new Rule('isLength', '短评长度为1-24字符', {min: 1, max: 24})
+			new Rule('isLength', '短评长度为1-24字符', { min: 1, max: 24 })
 		]
 	}
 }
@@ -157,18 +174,18 @@ class SearchValidator extends LinValidator {
 		super()
 		// keyword 要查询的关键字
 		this.q = [
-			new Rule('isLength', '搜索关键字q不能为空', {min: 1, max: 16}),
+			new Rule('isLength', '搜索关键字q不能为空', { min: 1, max: 16 }),
 		]
 		// 分页:
-			// 老版分页需要pageNum/perPage两个参数
-			// 现在一般用start/count两个参数
+		// 老版分页需要pageNum/perPage两个参数
+		// 现在一般用start/count两个参数
 		this.start = [
-			new Rule('isInt', '参数不合法', {min: 0, max: 60000}),
+			new Rule('isInt', '参数不合法', { min: 0, max: 60000 }),
 			new Rule('isOptional', '', 0),    // 不传start的话,默认给个0
 		]
 
 		this.count = [
-			new Rule('isInt', '参数不合法', {min: 1, max: 20}),
+			new Rule('isInt', '参数不合法', { min: 1, max: 20 }),
 			new Rule('isOptional', '', 20),    // 不传count的话,默认给个20
 		]
 	}
@@ -181,33 +198,15 @@ class AddNoteValidator extends LinValidator {
 	constructor() {
 		super()
 		this.title = [
-			new Rule('isLength', '文章标题须在1-32个字符之间', {min:1, max:32})
+			new Rule('isLength', '文章标题须在1-32个字符之间', { min: 1, max: 32 })
 		]
 		this.tag = [
-			new Rule('isLength', '需要TagsID序列', {min: 1, max: 50})
+			new Rule('isLength', '需要TagsID序列', { min: 1, max: 50 })
 		]
 		this.status = [
-			new Rule('isInt', '需要正整数且为1或2', {min:1, max:2})
+			new Rule('isInt', '需要正整数且为1或2', { min: 1, max: 2 })
 		]
 	}
-	/**
-	 * 校验用户文章是否与自己之前的文章标题重复
-	 * @param vals 
-	 */
-	// async validatePersonalNote(vals) {
-	// 	const title = vals.body.title
-	// 	const author = vals.body.author
-	// 	const note = await Note.findOne({
-	// 		where: {
-	// 			title: title,
-	// 			author: author,
-	// 			deletedAt: null
-	// 		}
-	// 	})
-	// 	if (note) {
-	// 		throw new Error('与您之前某篇文章标题重复,请换个标题或重新编辑之前的文章')
-	// 	}
-	// }
 }
 
 /**
@@ -233,24 +232,33 @@ class PublishNoteValidator extends PositiveIntegerValidator {
 	}
 }
 
+/**
+ * Note类基础校验器
+ */
 class NoteValidator extends LinValidator {
 	constructor() {
 		super()
 	}
 }
 
+/**
+ * Note更新校验器
+ */
 class NoteUpdateValidator extends PositiveIntegerValidator {
 	constructor() {
 		super()
 		this.title = [
-			new Rule('isLength', '文章标题须在1-32个字符之间', {min:1, max:32})
+			new Rule('isLength', '文章标题须在1-32个字符之间', { min: 1, max: 32 })
 		]
 		this.tag = [
-			new Rule('isLength', '需要TagsID序列', {min: 1, max: 50})
+			new Rule('isLength', '需要TagsID序列', { min: 1, max: 50 })
 		]
 	}
 }
 
+/**
+ * Tags类基础校验器
+ */
 class TagsValidator extends LinValidator {
 	constructor() {
 		super()
@@ -263,7 +271,7 @@ class TagsValidator extends LinValidator {
 			}
 		})
 		if (tag) {
-			throw new Error("此Tag已存在")
+			throw new Error('此Tag已存在')
 		}
 	}
 }

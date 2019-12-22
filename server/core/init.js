@@ -26,11 +26,11 @@ class InitManager {
 		}
 	}
 
-	static loadHttpException(){
+	static loadHttpException() {
 		global.errs = require('./httpException')
 	}
 
-	static loadConfig(path='') {
+	static loadConfig(path = '') {
 		const configPath = path || process.cwd() + '/config/config.js'
 		global.config = require(configPath)
 	}

@@ -1,3 +1,6 @@
+/**
+ * Http异常
+ */
 class HttpException extends Error {
 	constructor(message = '发生异常', errorCode = 10000, code = 400) {
 		super()
@@ -7,6 +10,9 @@ class HttpException extends Error {
 	}
 }
 
+/**
+ * 参数异常
+ */
 class ParameterException extends HttpException {
 	constructor(message, errorCode) {
 		super()
@@ -16,6 +22,9 @@ class ParameterException extends HttpException {
 	}
 }
 
+/**
+ * 成功响应
+ */
 class Success extends HttpException {
 	constructor(message = null, data) {
 		super()
@@ -25,6 +34,9 @@ class Success extends HttpException {
 	}
 }
 
+/**
+ * 无法访问异常
+ */
 class NotFound extends HttpException {
 	constructor(message, errorCode) {
 		super()
@@ -34,6 +46,9 @@ class NotFound extends HttpException {
 	}
 }
 
+/**
+ * 认证授权异常
+ */
 class AuthFailed extends HttpException {
 	constructor(message, errorCode) {
 		super()
@@ -43,6 +58,9 @@ class AuthFailed extends HttpException {
 	}
 }
 
+/**
+ * 禁止访问
+ */
 class Forbidden extends HttpException {
 	constructor(message, errorCode) {
 		super()
@@ -52,6 +70,9 @@ class Forbidden extends HttpException {
 	}
 }
 
+/**
+ * 点赞异常
+ */
 class LikeError extends HttpException {
 	constructor(message, errorCode) {
 		super()
@@ -61,6 +82,9 @@ class LikeError extends HttpException {
 	}
 }
 
+/**
+ * 取消点赞异常
+ */
 class DislikeError extends HttpException {
 	constructor(message, errorCode) {
 		super()
@@ -70,6 +94,9 @@ class DislikeError extends HttpException {
 	}
 }
 
+/**
+ * 收藏异常
+ */
 class CollectError extends HttpException {
 	constructor(message, errorCode) {
 		super()
@@ -79,6 +106,9 @@ class CollectError extends HttpException {
 	}
 }
 
+/**
+ * 取消收藏异常
+ */
 class CancelCollectError extends HttpException {
 	constructor(message, errorCode) {
 		super()
@@ -88,6 +118,9 @@ class CancelCollectError extends HttpException {
 	}
 }
 
+/**
+ * 标签异常
+ */
 class TagError extends HttpException {
 	constructor(message, errorcode) {
 		super()

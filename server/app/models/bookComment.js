@@ -1,5 +1,5 @@
-const {db} = require('../../core/db')
-const {Sequelize, Model} = require('sequelize')
+const { db } = require('../../core/db')
+const { Sequelize, Model } = require('sequelize')
 
 class Comment extends Model {
 	/**
@@ -23,27 +23,15 @@ class Comment extends Model {
 				nums: 1
 			})
 		} else {
-			return await comment.increment('nums', {by: 1})
+			return await comment.increment('nums', { by: 1 })
 		}
 	}
 
 	static async getComments(bookId) {
 		return await Comment.findAll({
-			where: {bookId: bookId}
+			where: { bookId: bookId }
 		})
 	}
-
-	/**
-	 * 自定义JSON序列化
-	 * @returns {{content: any, nums: any}}
-	 */
-	// toJSON() {
-	// 	// const all = this.dataValues;
-	// 	return {
-	// 		content: this.getDataValue('content'),
-	// 		nums: this.getDataValue('nums')
-	// 	}
-	// }
 }
 
 Comment.init({

@@ -1,12 +1,13 @@
 const Router = require('koa-router')
-const {TokenValidator, NotEmptyValidator} = require('../../validators/validator')
-const {LoginType} = require('../../lib/enum')
-const {User} = require('../../models/user')
-const router = new Router({prefix: '/v1/token'})
-const {generateToken} = require('../../../core/util')
-const {Auth} = require('../../../middlewares/auth')
-const {MXManager} = require('../../services/wx')
-const {github} = require('../../../config/config')
+const { TokenValidator, NotEmptyValidator } = require('../../validators/validator')
+const { LoginType } = require('../../lib/enum')
+const { User } = require('../../models/user')
+const router = new Router({ prefix: '/v1/token' })
+const { generateToken } = require('../../../core/util')
+const { Auth } = require('../../../middlewares/auth')
+const { MXManager } = require('../../services/wx')
+const { github } = require('../../../config/config')
+const { success } = require('../../lib/helper')
 const axios = require('axios')
 
 /**
@@ -32,7 +33,7 @@ router.post('/', async (ctx) => {
 
 	ctx.body = {
 		code: 200,
-		data: {token},
+		data: { token },
 		message: null
 	}
 })
@@ -43,7 +44,7 @@ router.post('/', async (ctx) => {
 router.post('/verify', async (ctx) => {
 	const v = await new NotEmptyValidator().validate(ctx)
 	const res = Auth.verifyToken(v.get('body.token'))
-	ctx.body = {result: res}
+	ctx.body = { result: res }
 })
 
 /**
@@ -62,11 +63,8 @@ router.get('/github', async ctx => {
 			const userName = tr.data.login
 			const githubId = tr.data.id
 			const email = tr.data.email
-			token = await githubLogin(githubId, userName, email)
-			ctx.status = 302
-			ctx.body = {
-				data: {token}
-			}
+			const { token, user } = await githubLogin(githubId, userName, email)
+			success('ok', { token, user })
 		}
 
 	}
@@ -85,10 +83,20 @@ async function emailLogin(account, secret) {
 	return generateToken(user.id, Auth.USER)
 }
 
+/**
+ * 用户github登录方法
+ * @param githubId 
+ * @param userName 
+ * @param email 
+ */
 async function githubLogin(githubId, userName, email) {
-	const uid = await User.getUserByGithubId(githubId, userName, email)
-	console.log(uid)
-	return generateToken(uid, Auth.USER)
+	const user = await User.getUserByGithubId(githubId, userName, email)
+	console.log(user.id)
+	const token = generateToken(user.id, Auth.USER)
+	return {
+		token,
+		user
+	}
 }
 
 module.exports = router

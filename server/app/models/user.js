@@ -1,5 +1,5 @@
-const {db} = require('../../core/db')
-const {Sequelize, Model} = require('sequelize')
+const { db } = require('../../core/db')
+const { Sequelize, Model } = require('sequelize')
 const bcryptjs = require('bcryptjs')
 
 /**
@@ -14,7 +14,7 @@ class User extends Model {
 	 */
 	static async verifyEmailPassword(email, plainPassword) {
 		const user = await User.findOne({
-			where: {email: email}
+			where: { email: email }
 		})
 
 		// 没有对应用户
@@ -42,25 +42,24 @@ class User extends Model {
 				githubId: githubId,
 			}
 		})
+		console.log(gitUser)
 		if (gitUser) {
-			return gitUser.id
+			return gitUser
 		} else {
-			await User.create({
+			return await User.create({
 				githubId: githubId,
 				userName: userName,
 				email: email
-			}).then(user => {
-				return user.id
 			})
 		}
 	}
 
 	/**
 	 * 获取用户
-	 * @param id 
+	 * @param id 用户id
 	 */
 	static async getUserInfo(id) {
-		return await User.findOne({where: {id: id}})
+		return await User.findOne({ where: { id: id } })
 	}
 
 	static async modifyInfo(info, id) {
@@ -118,4 +117,4 @@ User.init({
 	tableName: 'user'
 })
 
-module.exports = {User}
+module.exports = { User }
