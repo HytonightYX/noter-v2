@@ -1,6 +1,7 @@
 const { Sequelize, Model, Op } = require('sequelize')
 const { db } = require('../../core/db')
 const { Tag } = require('../models/tag')
+const { User } = require('../models/user')
 
 class Note extends Model {
 	/**
@@ -33,13 +34,14 @@ class Note extends Model {
 	 * 按更新时间降序排序
 	 */
 	static async showAllNotes() {
-		let notes = await Note.findAll({
-			order: [
-				['updatedAt', 'DESC']
-			],
-			raw: true
-		})
-
+		let notes = await db.query(
+			`
+			SELECT u.user_name, u.avatar, n.*
+			FROM note n 
+			LEFT JOIN user u ON n.author = u.id
+			order by n.updated_at DESC
+			`
+			, { raw: true })
 		let tagObj = {}
 
 		await Tag.findAll({ raw: true }).map(item => {
@@ -47,7 +49,8 @@ class Note extends Model {
 		})
 
 
-		notes = notes.map(item => {
+		notes = notes[0].map(item => {
+
 			let tags = item.tag.split(',').map(item => {
 				return { id: item, name: tagObj[item] }
 			})

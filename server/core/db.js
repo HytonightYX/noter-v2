@@ -12,7 +12,7 @@ const db = new Sequelize(dbName, user, pwd, {
 	define: {
 		timestamps: true,
 		paranoid: true,
-		underscored: true, 	//  自动将驼峰转下划线
+		underscored: true, 		// 自动将驼峰转下划线
 		scopes: {
 			noTS: {
 				attributes: {

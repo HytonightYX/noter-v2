@@ -36,20 +36,20 @@ class User extends Model {
 	 * @param userName github的用户名
 	 * @param email github绑定的用户邮箱
 	 */
-	static async getUserByGithubId(githubId, userName, email) {
+	static async getUserByGithubId(githubId, userName, email, avatar) {
 		const gitUser = await User.findOne({
 			where: {
 				githubId: githubId,
 			}
 		})
-		console.log(gitUser)
 		if (gitUser) {
 			return gitUser
 		} else {
 			return await User.create({
 				githubId: githubId,
 				userName: userName,
-				email: email
+				email: email,
+				avatar: avatar
 			})
 		}
 	}
@@ -111,7 +111,9 @@ User.init({
 	// 专长
 	expertise: Sequelize.STRING(255),
 	// 简介
-	desc: Sequelize.STRING(255)
+	desc: Sequelize.STRING(255),
+	// 用户头像
+	avatar: Sequelize.STRING(255)
 }, {
 	sequelize: db,
 	tableName: 'user'

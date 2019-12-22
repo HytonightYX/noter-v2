@@ -20,15 +20,14 @@ router.post('/', async (ctx) => {
 	let token;
 
 	switch (v.get('body.type')) {
-		case LoginType.USER_EMAIL:
-			token = await emailLogin(v.get('body.account'), v.get('body.secret'))
-			break
-		case LoginType.USER_MINI_PROGRAM:
-			token = await MXManager.codeToToken(v.get('body.account'))
-			break
-
-		default:
-			throw new global.errs.ParameterException('没有响应的异常处理函数')
+	case LoginType.USER_EMAIL:
+		token = await emailLogin(v.get('body.account'), v.get('body.secret'))
+		break
+	case LoginType.USER_MINI_PROGRAM:
+		token = await MXManager.codeToToken(v.get('body.account'))
+		break
+	default:
+		throw new global.errs.ParameterException('没有响应的异常处理函数')
 	}
 
 	ctx.body = {
@@ -52,21 +51,24 @@ router.post('/verify', async (ctx) => {
  */
 router.get('/github', async ctx => {
 	const code = ctx.query.code
+	console.log(code)
 	const r = await axios.post('https://github.com/login/oauth/access_token', {
 		client_id: github.client_id,
 		client_secret: github.client_secret,
 		code: code
 	})
 	if (r && r.status === 200) {
+		console.log(r.data)
 		const tr = await axios.get('https://api.github.com/user?' + r.data)
 		if (tr && tr.status === 200) {
+			console.log(tr.data)
 			const userName = tr.data.login
 			const githubId = tr.data.id
 			const email = tr.data.email
-			const { token, user } = await githubLogin(githubId, userName, email)
-			success('ok', { token, user })
+			const avatar = tr.data.avatar_url
+			const { token, user } = await githubLogin(githubId, userName, email, avatar)
+			success('ok', { token, user, avatar })
 		}
-
 	}
 })
 
@@ -89,8 +91,8 @@ async function emailLogin(account, secret) {
  * @param userName 
  * @param email 
  */
-async function githubLogin(githubId, userName, email) {
-	const user = await User.getUserByGithubId(githubId, userName, email)
+async function githubLogin(githubId, userName, email, avatar) {
+	const user = await User.getUserByGithubId(githubId, userName, email, avatar)
 	console.log(user.id)
 	const token = generateToken(user.id, Auth.USER)
 	return {

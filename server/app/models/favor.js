@@ -9,39 +9,6 @@ const { Note } = require('../models/note')
  */
 class Favor extends Model {
 
-	// /**
-	//  * 用户是否喜欢该期刊
-	//  * @param artId
-	//  * @param type
-	//  * @param uid
-	//  * @returns {Promise<boolean>}
-	//  */
-	// static async userLikeIt(artId, type, uid) {
-	// 	const favor = await Favor.findOne({
-	// 		where: { uid, artId, type }
-	// 	})
-	// 	return favor ? true : false
-	// }
-
-	// static async getMyClassicFavors(uid) {
-	// 	const arts = await Favor.findAll({
-	// 		where: {
-	// 			uid: uid,
-	// 			type: {
-	// 				// 排除book类型
-	// 				[Op.not]: 400
-	// 			}
-	// 		}
-	// 	})
-
-	// 	if (!arts) {
-	// 		throw new global.err.NotFound()
-	// 	}
-
-	// 	// 禁止循环查询数据库
-	// 	return await Art.getList(arts)
-	// }
-
 	/**
 	 * 获取用户是否喜欢某书籍
 	 * @param uid
