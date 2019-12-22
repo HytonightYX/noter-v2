@@ -1,12 +1,13 @@
 const Router = require('koa-router')
-const {TokenValidator, NotEmptyValidator} = require('../../validators/validator')
-const {LoginType} = require('../../lib/enum')
-const {User} = require('../../models/user')
-const router = new Router({prefix: '/v1/token'})
-const {generateToken} = require('../../../core/util')
-const {Auth} = require('../../../middlewares/auth')
-const {MXManager} = require('../../services/wx')
-const {github} = require('../../../config/config')
+const { TokenValidator, NotEmptyValidator } = require('../../validators/validator')
+const { LoginType } = require('../../lib/enum')
+const { User } = require('../../models/user')
+const router = new Router({ prefix: '/v1/token' })
+const { generateToken } = require('../../../core/util')
+const { Auth } = require('../../../middlewares/auth')
+const { MXManager } = require('../../services/wx')
+const { github } = require('../../../config/config')
+const { success } = require('../../lib/helper')
 const axios = require('axios')
 
 /**
@@ -19,20 +20,19 @@ router.post('/', async (ctx) => {
 	let token;
 
 	switch (v.get('body.type')) {
-		case LoginType.USER_EMAIL:
-			token = await emailLogin(v.get('body.account'), v.get('body.secret'))
-			break
-		case LoginType.USER_MINI_PROGRAM:
-			token = await MXManager.codeToToken(v.get('body.account'))
-			break
-
-		default:
-			throw new global.errs.ParameterException('没有响应的异常处理函数')
+	case LoginType.USER_EMAIL:
+		token = await emailLogin(v.get('body.account'), v.get('body.secret'))
+		break
+	case LoginType.USER_MINI_PROGRAM:
+		token = await MXManager.codeToToken(v.get('body.account'))
+		break
+	default:
+		throw new global.errs.ParameterException('没有响应的异常处理函数')
 	}
 
 	ctx.body = {
 		code: 200,
-		data: {token},
+		data: { token },
 		message: null
 	}
 })
@@ -43,7 +43,7 @@ router.post('/', async (ctx) => {
 router.post('/verify', async (ctx) => {
 	const v = await new NotEmptyValidator().validate(ctx)
 	const res = Auth.verifyToken(v.get('body.token'))
-	ctx.body = {result: res}
+	ctx.body = { result: res }
 })
 
 /**
@@ -51,24 +51,24 @@ router.post('/verify', async (ctx) => {
  */
 router.get('/github', async ctx => {
 	const code = ctx.query.code
+	console.log(code)
 	const r = await axios.post('https://github.com/login/oauth/access_token', {
 		client_id: github.client_id,
 		client_secret: github.client_secret,
 		code: code
 	})
 	if (r && r.status === 200) {
+		console.log(r.data)
 		const tr = await axios.get('https://api.github.com/user?' + r.data)
 		if (tr && tr.status === 200) {
+			console.log(tr.data)
 			const userName = tr.data.login
 			const githubId = tr.data.id
 			const email = tr.data.email
-			token = await githubLogin(githubId, userName, email)
-			ctx.status = 302
-			ctx.body = {
-				data: {token}
-			}
+			const avatar = tr.data.avatar_url
+			const { token, user } = await githubLogin(githubId, userName, email, avatar)
+			success('ok', { token, user, avatar })
 		}
-
 	}
 })
 
@@ -85,10 +85,20 @@ async function emailLogin(account, secret) {
 	return generateToken(user.id, Auth.USER)
 }
 
-async function githubLogin(githubId, userName, email) {
-	const uid = await User.getUserByGithubId(githubId, userName, email)
-	console.log(uid)
-	return generateToken(uid, Auth.USER)
+/**
+ * 用户github登录方法
+ * @param githubId 
+ * @param userName 
+ * @param email 
+ */
+async function githubLogin(githubId, userName, email, avatar) {
+	const user = await User.getUserByGithubId(githubId, userName, email, avatar)
+	console.log(user.id)
+	const token = generateToken(user.id, Auth.USER)
+	return {
+		token,
+		user
+	}
 }
 
 module.exports = router

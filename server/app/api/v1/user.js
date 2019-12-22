@@ -1,9 +1,9 @@
 const Router = require('koa-router')
-const router = new Router({prefix: '/v1/user'})
-const {User} = require('../../models/user')
-const {RegisterValidator, UserModifyValidator} = require('../../validators/validator')
-const {success} = require('../../lib/helper')
-const {Auth} = require('../../../middlewares/auth')
+const router = new Router({ prefix: '/v1/user' })
+const { User } = require('../../models/user')
+const { RegisterValidator, UserModifyValidator } = require('../../validators/validator')
+const { success } = require('../../lib/helper')
+const { Auth } = require('../../../middlewares/auth')
 
 /**
  * 注册功能
@@ -29,7 +29,7 @@ router.get('/info', new Auth().m, async ctx => {
 		code: 201,
 		data: user,
 		msg: 'ok'
-	} 
+	}
 })
 
 /**

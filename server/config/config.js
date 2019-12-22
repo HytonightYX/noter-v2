@@ -9,7 +9,7 @@ module.exports = {
 		pwd: 'noter'
 	},
 	security: {
-		secretKey: "abcdefg",        // 秘钥
+		secretKey: 'abcdefg',        // 秘钥
 		expiresIn: 60 * 60 * 24 * 30,   // 令牌过期时间 一个月
 	},
 	github: {
@@ -22,5 +22,5 @@ module.exports = {
 		appSecret: '4f3c874f2d9ac51d5dbf4ee82aa8dd1a',
 		loginUrl: 'https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code'
 	},
-	host:'http://localhost:3030/'
+	host: 'http://localhost:3030/'
 }

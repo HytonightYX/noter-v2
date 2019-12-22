@@ -1,5 +1,5 @@
-const {db} = require('../../core/db')
-const {Sequelize, Model} = require('sequelize')
+const { db } = require('../../core/db')
+const { Sequelize, Model } = require('sequelize')
 const bcryptjs = require('bcryptjs')
 
 /**
@@ -14,7 +14,7 @@ class User extends Model {
 	 */
 	static async verifyEmailPassword(email, plainPassword) {
 		const user = await User.findOne({
-			where: {email: email}
+			where: { email: email }
 		})
 
 		// 没有对应用户
@@ -36,31 +36,30 @@ class User extends Model {
 	 * @param userName github的用户名
 	 * @param email github绑定的用户邮箱
 	 */
-	static async getUserByGithubId(githubId, userName, email) {
+	static async getUserByGithubId(githubId, userName, email, avatar) {
 		const gitUser = await User.findOne({
 			where: {
 				githubId: githubId,
 			}
 		})
 		if (gitUser) {
-			return gitUser.id
+			return gitUser
 		} else {
-			await User.create({
+			return await User.create({
 				githubId: githubId,
 				userName: userName,
-				email: email
-			}).then(user => {
-				return user.id
+				email: email,
+				avatar: avatar
 			})
 		}
 	}
 
 	/**
 	 * 获取用户
-	 * @param id 
+	 * @param id 用户id
 	 */
 	static async getUserInfo(id) {
-		return await User.findOne({where: {id: id}})
+		return await User.findOne({ where: { id: id } })
 	}
 
 	static async modifyInfo(info, id) {
@@ -112,10 +111,12 @@ User.init({
 	// 专长
 	expertise: Sequelize.STRING(255),
 	// 简介
-	desc: Sequelize.STRING(255)
+	desc: Sequelize.STRING(255),
+	// 用户头像
+	avatar: Sequelize.STRING(255)
 }, {
 	sequelize: db,
 	tableName: 'user'
 })
 
-module.exports = {User}
+module.exports = { User }

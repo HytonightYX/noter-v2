@@ -1,29 +1,18 @@
 # Noter在线笔记共享平台
+## 代码审查说明
+### 基本上每个必要的地方都写了注释，如果评委们还是不放心的话↓↓↓:
+- 本项中的代码已使用ESLint规范化过，代码规范问题不必担心
+- 服务端接口代码在/server/app/v1/目录下
+- 数据库交互采用ORM，处理业务代码在/server/models/目录下 
+- 校验器在/server/validators/目录下
 
-
-
-## 笔记API 
+## API正在整理ING，还请到api目录下审查
+## 笔记API
 
 | 功能           | 请求类型 | 路径            | 传输类型 |
 | -------------- | -------- | --------------- | ---- |
-| 笔记测试接口 | GET      | api/notes/test |      |
-| 所有笔记 | GET      | api/notes       |  |
-| 添加笔记 | POST | api/notes | JSON |
-| 根据id获取笔记 | GET | api/notes/:id |      |
-| 更新笔记 | PATCH | api/notes | JSON |
-| 根据所有者id获取他的所有笔记 | GET | Api/notes/owner/:ownerId | |
-| 删除笔记 | DELETE | api/notes/:id | |
-
-
 
 ## 用户API
 
 | 功能         | 请求类型 | 路径           | 传输类型 |
 | ------------ | -------- | -------------- | -------- |
-| 用户测试接口 | GET | api/users/test |          |
-|     获取用户详情         | GET | api/users/:id |          |
-| 新用户注册 | POST | api/users/register | 暂时废弃 |
-| 修改用户信息 | PATCH | api/users/:id | {newUser} |
-
-
-
