@@ -11,6 +11,7 @@
 |email|varchar(255)|邮箱| | |
 |expertise|varchar(255)|专长| | |
 |desc|varchar(255)|简介| | |
+|avatar|varchar(255)|github图片| | 存图片地址 |
 
 ## note表
 |字段名|类型|含义|约束|备注|
