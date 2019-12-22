@@ -13,6 +13,7 @@ const {success} = require('../../lib/helper')
  * 公开
  */
 router.get('/test', (ctx, next) => {
+	ctx.status = 302
 	ctx.body = {
 		code: 201,
 		msg: 'book router ok'

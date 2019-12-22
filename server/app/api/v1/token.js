@@ -6,6 +6,8 @@ const router = new Router({prefix: '/v1/token'})
 const {generateToken} = require('../../../core/util')
 const {Auth} = require('../../../middlewares/auth')
 const {MXManager} = require('../../services/wx')
+const {github} = require('../../../config/config')
+const axios = require('axios')
 
 /**
  * 校验令牌
@@ -45,6 +47,32 @@ router.post('/verify', async (ctx) => {
 })
 
 /**
+ * github一键登录接口
+ */
+router.get('/github', async ctx => {
+	const code = ctx.query.code
+	const r = await axios.post('https://github.com/login/oauth/access_token', {
+		client_id: github.client_id,
+		client_secret: github.client_secret,
+		code: code
+	})
+	if (r && r.status === 200) {
+		const tr = await axios.get('https://api.github.com/user?' + r.data)
+		if (tr && tr.status === 200) {
+			const userName = tr.data.login
+			const githubId = tr.data.id
+			const email = tr.data.email
+			token = await githubLogin(githubId, userName, email)
+			ctx.status = 302
+			ctx.body = {
+				data: {token}
+			}
+		}
+
+	}
+})
+
+/**
  * 校验用户账号密码是否和数据库中一致,
  * 如果一致,则颁布一个令牌
  *
@@ -55,6 +83,12 @@ router.post('/verify', async (ctx) => {
 async function emailLogin(account, secret) {
 	const user = await User.verifyEmailPassword(account, secret)
 	return generateToken(user.id, Auth.USER)
+}
+
+async function githubLogin(githubId, userName, email) {
+	const uid = await User.getUserByGithubId(githubId, userName, email)
+	console.log(uid)
+	return generateToken(uid, Auth.USER)
 }
 
 module.exports = router
