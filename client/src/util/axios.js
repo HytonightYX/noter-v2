@@ -31,7 +31,8 @@ axiosIns.interceptors.request.use(
  */
 axiosIns.interceptors.response.use(
 	response => {
-		if (response.data.code === 200) {     // 响应结果里的status: ok是我与后台的约定，大家可以根据实际情况去做对应的判断
+		console.log(response)
+		if (response.data.code === 200) {
 			return Promise.resolve(response.data)
 		} else {
 			return Promise.reject(response.data.message)
@@ -42,6 +43,10 @@ axiosIns.interceptors.response.use(
 		if (error.response) {
 			// 根据请求失败的 http 状态码去给用户相应的提示
 			// let tips = error.response.status in httpCode ? httpCode[error.response.status] : error.response.data.message
+
+			if (error.response.status === 302) {
+				console.log(error.response.data)
+			}
 
 			// 资源不存在
 			if (error.response.status === 404) {

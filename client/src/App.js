@@ -1,5 +1,6 @@
 import React, { lazy } from 'react'
-import { HashRouter as Router, Route, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import LoginGuard from './component/LoginGuard'
 import NavWrapper from './component/NavWrapper'
 
 import 'semantic-ui-css/semantic.min.css'
@@ -9,6 +10,9 @@ import Find from './page/find'
 import Write from './page/write'
 import Note from './page/note'
 import Profile from './page/profile'
+import Login from './page/login'
+
+import history from './history'
 
 class App extends React.Component {
 	constructor(props) {
@@ -17,18 +21,21 @@ class App extends React.Component {
 
 	render() {
 		return (
-			<Router>
+			<Router history={history}>
 				<div className='app-root'>
 					<NavWrapper/>
 
 					<div className="g-content">
-						<Switch>
-							<Route exact path='/' component={Find}/>
-							<Route exact path='/find' component={Find}/>
-							<Route exact path='/write' component={Write}/>
-							<Route exact path='/note' component={Note}/>
-							<Route exact path='/profile' component={Profile}/>
-						</Switch>
+						<LoginGuard>
+							<Switch>
+								<Route exact path='/' component={Find}/>
+								<Route exact path='/login' component={Login}/>
+								<Route exact path='/find' component={Find}/>
+								<Route exact path='/write' component={Write}/>
+								<Route exact path='/note' component={Note}/>
+								<Route exact path='/profile' component={Profile}/>
+							</Switch>
+						</LoginGuard>
 					</div>
 
 				</div>
