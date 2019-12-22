@@ -104,7 +104,7 @@ class Note extends Model {
 	 * 查询用户所有文章，降序排序
 	 * @param id 用户ID 
 	 */
-	static async queryNoteById(id) {
+	static async queryNoteByAuthor(id) {
 		return await Note.findAll({
 			where: {
 				author: id
@@ -113,6 +113,17 @@ class Note extends Model {
 				['updatedAt', 'DESC']
 			]
 		})
+	}
+
+	/**
+	 * 查询文章详情
+	 * @param id 
+	 */
+	static async queryNoteById(id) {
+		const content = await Note.findByPk(id, {
+			attributes: { exclude: ['raw'] }
+		})
+		return content
 	}
 
 	/**

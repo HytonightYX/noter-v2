@@ -90,7 +90,7 @@ router.post('/upload', new Auth().m, upload.single('file'), ctx => {
  * 获取当前用户的文章
  */
 router.get('/mine', new Auth().m, async ctx => {
-	const notes = await Note.queryNoteById(ctx.auth.uid)
+	const notes = await Note.queryNoteByAuthor(ctx.auth.uid)
 	ctx.body = {
 		code: 201,
 		data: notes,
@@ -117,6 +117,16 @@ router.post('/update', new Auth().m, async ctx => {
 	const newNote = v.get('body')
 	await Note.updateNote(newNote)
 	success('ok');
+})
+
+/**
+ * 文章详情接口
+ */
+router.get('/:id', async ctx => {
+	const v = await new PositiveIntegerValidator().validate(ctx, { id: 'id' })
+	const id = v.get('path.id')
+	const content = await Note.queryNoteById(id)
+	success('ok', content)
 })
 
 module.exports = router
