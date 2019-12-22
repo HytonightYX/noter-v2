@@ -4,6 +4,7 @@ const {Auth} = require('../../../middlewares/auth')
 const {LikeValidator} = require('../../validators/validator')
 const {Favor} = require('../../models/favor')
 const {success} = require('../../lib/helper')
+
 /**
  * 点赞接口
  */
@@ -15,7 +16,6 @@ router.post('/', new Auth(8).m, async ctx => {
 		v.get('body.type'),
 		ctx.auth.uid
 	)
-
 	success()
 })
 
@@ -30,7 +30,6 @@ router.post('/cancel', new Auth(8).m, async ctx => {
 		v.get('body.type'),
 		ctx.auth.uid
 	)
-
 	success()
 })
 

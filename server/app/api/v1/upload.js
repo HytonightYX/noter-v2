@@ -3,7 +3,9 @@ const router = new Router({prefix: '/v1/upload'})
 const path = require('path')
 const send = require('koa-send')
 
-
+/**
+ * 获取静态资源接口
+ */
 router.get('/:filename', async (ctx) => {
     const filename = ctx.params.filename
     console.log(filename)

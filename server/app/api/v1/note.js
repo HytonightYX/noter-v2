@@ -7,6 +7,7 @@ const {success} = require('../../lib/helper')
 const {Auth} = require('../../../middlewares/auth')
 const dayjs = require('dayjs')
 const multer = require('@koa/multer')
+
 // 文件上传中间件
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -107,6 +108,9 @@ router.get('/delete/:id', new Auth().m, async ctx => {
     success()
 })
 
+/**
+ * 文章更新接口
+ */
 router.post('/update', new Auth().m, async ctx => {
     const id = ctx.auth.uid
     ctx.request.body.author = id

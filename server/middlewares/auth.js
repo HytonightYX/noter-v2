@@ -19,10 +19,6 @@ class Auth {
 			let decode
 			const userToken = basicAuth(ctx.req)
 
-			// ctx.body = {token}
-			// ctx.req => node.js 原生 request
-			// ctx.request => koa封装后的request
-
 			// 如果token不存在或者其中的name为空,抛出
 			if (!userToken || !userToken.name) {
 				throw new global.errs.Forbidden(msg)

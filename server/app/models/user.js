@@ -2,7 +2,16 @@ const {db} = require('../../core/db')
 const {Sequelize, Model} = require('sequelize')
 const bcryptjs = require('bcryptjs')
 
+/**
+ * User 模板,数据库生成user表
+ */
 class User extends Model {
+
+	/**
+	 * 验证邮箱口令
+	 * @param email 邮箱
+	 * @param plainPassword 密码明文 
+	 */
 	static async verifyEmailPassword(email, plainPassword) {
 		const user = await User.findOne({
 			where: {email: email}
@@ -21,14 +30,35 @@ class User extends Model {
 		return user
 	}
 
-	static async getUserByGithubId(githubId) {
-		return await User.findOne({where:{github_id: githubId}})
+	/**
+	 * github一键登录
+	 * @param githubId github的用户id
+	 * @param userName github的用户名
+	 * @param email github绑定的用户邮箱
+	 */
+	static async getUserByGithubId(githubId, userName, email) {
+		const gitUser = await User.findOne({
+			where: {
+				githubId: githubId,
+			}
+		})
+		if (gitUser) {
+			return gitUser.id
+		} else {
+			await User.create({
+				githubId: githubId,
+				userName: userName,
+				email: email
+			}).then(user => {
+				return user.id
+			})
+		}
 	}
 
-	static async registerByGithubId(githubId) {
-		return await User.create({github_id: githubId})
-	}
-
+	/**
+	 * 获取用户
+	 * @param id 
+	 */
 	static async getUserInfo(id) {
 		return await User.findOne({where: {id: id}})
 	}
