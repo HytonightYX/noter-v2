@@ -20,14 +20,14 @@ router.post('/', async (ctx) => {
 	let token;
 
 	switch (v.get('body.type')) {
-	case LoginType.USER_EMAIL:
-		token = await emailLogin(v.get('body.account'), v.get('body.secret'))
-		break
-	case LoginType.USER_MINI_PROGRAM:
-		token = await MXManager.codeToToken(v.get('body.account'))
-		break
-	default:
-		throw new global.errs.ParameterException('没有响应的异常处理函数')
+		case LoginType.USER_EMAIL:
+			token = await emailLogin(v.get('body.account'), v.get('body.secret'))
+			break
+		case LoginType.USER_MINI_PROGRAM:
+			token = await MXManager.codeToToken(v.get('body.account'))
+			break
+		default:
+			throw new global.errs.ParameterException('没有响应的异常处理函数')
 	}
 
 	ctx.body = {
@@ -58,13 +58,14 @@ router.get('/github', async ctx => {
 		code: code
 	})
 	if (r && r.status === 200) {
-		console.log(r.data)
-		const tr = await axios.get('https://api.github.com/user?' + r.data)
-		if (tr && tr.status === 200) {
-			console.log(tr.data)
-			const { token, user } = await githubLogin(tr.data)
-		
-		success('ok', { token, user, type: 233 })
+		if (r.data.split('=')[0] === 'access_token') {
+			const tr = await axios.get('https://api.github.com/user?' + r.data)
+			if (tr && tr.status === 200) {
+				const { token, user } = await githubLogin(tr.data)
+				success(user.userName + '欢迎您', { token, user, type: 233 })
+			}
+		} else {
+			throw new global.errs.Forbidden()
 		}
 	}
 })

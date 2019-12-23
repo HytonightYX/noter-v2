@@ -24,7 +24,6 @@ class Note extends Model {
 	 * 新增文章,存草稿或者直接发布
 	 */
 	static async addNote(note) {
-		console.log(note)
 		return await Note.create({
 			...note
 		})

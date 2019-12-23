@@ -8,7 +8,6 @@ const send = require('koa-send')
  */
 router.get('/:filename', async (ctx) => {
 	const filename = ctx.params.filename
-	console.log(filename)
 	await send(ctx, filename, { root: path.resolve(__dirname, '../../../upload') })
 })
 

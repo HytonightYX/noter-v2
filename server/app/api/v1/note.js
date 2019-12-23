@@ -13,7 +13,6 @@ var storage = multer.diskStorage({
 		cb(null, 'upload/')
 	},
 	filename: function (req, file, cb) {
-		console.log(file)
 		let type = file.originalname.split('.').splice(-1)
 		cb(null, `IMG_${dayjs((new Date())).format('YYYYMMDDhhmmss')}.${type}`)
 	}
@@ -25,7 +24,6 @@ const upload = multer({ storage })
  * 新增文章
  */
 router.post('/add', new Auth().m, async ctx => {
-	console.log(ctx.auth.uid)
 	const v = await new AddNoteValidator().validate(ctx)
 	const note = v.get('body')
 	note.author = ctx.auth.uid
@@ -38,7 +36,7 @@ router.post('/add', new Auth().m, async ctx => {
  */
 router.get('/', async () => {
 	const notes = await Note.showAllNotes()
-	success('ok', notes)
+	success('已更新', notes)
 })
 
 /**
