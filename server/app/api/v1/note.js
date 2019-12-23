@@ -68,10 +68,9 @@ router.post('/publish', async ctx => {
 /**
  * 按照标题查询文章(模糊查询)
  */
-router.get('/getNotesByTitle', async ctx => {
+router.get('/search/:title', async ctx => {
 	const v = await new NoteValidator().validate(ctx)
 	const notes = await Note.queryNoteByTitle(v.get('path.title'))
-	const msg = notes.length ? 'success' : 'failed'
 	success('ok', notes)
 })
 

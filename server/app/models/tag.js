@@ -19,14 +19,6 @@ class Tag extends Model {
 	 * @param author 作者id
 	 */
 	static async addTags(name, author) {
-		const tags = await Tag.count({
-			where: {
-				author: author
-			}
-		})
-		if (tags > 1) {
-			throw new global.errs.TagError()
-		}
 		return await Tag.create({
 			name: name,
 			author: author

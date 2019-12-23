@@ -85,9 +85,6 @@ class UserModifyValidator extends LinValidator {
 class TagAddValidator extends LinValidator {
 	constructor() {
 		super()
-		this.name = [
-			new Rule('isLength', 'TAG名称长度为1~8个字符', { min: 1, max: 8 })
-		]
 	}
 }
 

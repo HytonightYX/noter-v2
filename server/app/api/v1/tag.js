@@ -16,10 +16,10 @@ router.get('/', async ctx => {
 /**
  * 自定义标签接口
  */
-router.get('/add/:name', new Auth().m, async ctx => {
+router.post('/add', new Auth().m, async ctx => {
 	const v = await new TagAddValidator().validate(ctx)
-	const name = v.get('path.name')
-	await Tag.addTags(name, ctx.auth.uid)
+	const name = v.get('body.name')
+	await Tag.addTags(name, 0)
 	success()
 })
 
