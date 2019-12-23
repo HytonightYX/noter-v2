@@ -32,7 +32,7 @@ class ImageLoader extends React.Component {
 			<img
 				src={this.props.src}
 				onClick={this.props.onClick}
-				className={className}
+				className={`${className} m-find-image`}
 				onLoad={this.onLoad}
 			/>
 		)
