@@ -18,6 +18,7 @@
 | :--------: | :---: | :----: | :--------: | :--------:|
 |id|int|记录id|Primary_Key(id)|  |
 |title|varchar(255)|标题| |  |
+|cover|varchar(255)|标题| | 存图片hash值 |
 |raw|text|json内容| | 存json |
 |html|text|h5内容| | 存H5标签 |
 |author|int|作者id| Foreign_Key(user) | |
