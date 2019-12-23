@@ -24,12 +24,8 @@ router.post('/register', async (ctx, next) => {
  * 获取用户信息
  */
 router.get('/info', new Auth().m, async ctx => {
-	const user = await User.getUserInfo(ctx.auth.id)
-	return {
-		code: 201,
-		data: user,
-		msg: 'ok'
-	}
+	const user = await User.getUserInfo(ctx.auth.uid)
+	success('ok', user)
 })
 
 /**

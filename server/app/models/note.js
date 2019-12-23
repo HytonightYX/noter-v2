@@ -1,7 +1,6 @@
 const { Sequelize, Model, Op } = require('sequelize')
 const { db } = require('../../core/db')
 const { Tag } = require('../models/tag')
-const { User } = require('../models/user')
 
 class Note extends Model {
 	/**
@@ -25,6 +24,7 @@ class Note extends Model {
 	 * 新增文章,存草稿或者直接发布
 	 */
 	static async addNote(note) {
+		console.log(note)
 		return await Note.create({
 			...note
 		})

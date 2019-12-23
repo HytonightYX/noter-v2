@@ -25,12 +25,12 @@ const upload = multer({ storage })
  * 新增文章
  */
 router.post('/add', new Auth().m, async ctx => {
-	const id = ctx.auth.uid
-	ctx.request.body.author = id
+	console.log(ctx.auth.uid)
 	const v = await new AddNoteValidator().validate(ctx)
 	const note = v.get('body')
+	note.author = ctx.auth.uid
 	await Note.addNote(note)
-	success('ok');
+	success('新增成功')
 })
 
 /**
