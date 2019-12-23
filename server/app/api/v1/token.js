@@ -51,7 +51,6 @@ router.post('/verify', async (ctx) => {
  */
 router.get('/github', async ctx => {
 	const code = ctx.query.code
-	console.log(code)
 	const r = await axios.post('https://github.com/login/oauth/access_token', {
 		client_id: github.client_id,
 		client_secret: github.client_secret,
