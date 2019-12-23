@@ -1,6 +1,9 @@
 const { Sequelize, Model } = require('sequelize')
 const { db } = require('../../core/db')
 
+/**
+ * 文章标签业务
+ */
 class Tag extends Model {
 	/**
 	 * 展示所有用户标签

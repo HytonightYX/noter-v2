@@ -1,10 +1,10 @@
 # Noter在线笔记共享平台
-## 代码审查说明
+## 代码审查说明,为了方便评委审查，下面有直达链接
 ### 基本上每个必要的地方都写了注释，如果评委们还是不放心的话↓↓↓:
 - 本项中的代码已使用ESLint规范化过，代码规范问题不必担心
-- 服务端接口代码在/server/app/v1/目录下
-- 数据库交互采用ORM，处理业务代码在/server/models/目录下 
-- 校验器在/server/validators/目录下
+- 服务端接口代码在/server/app/v1/目录下 [接口代码](https://github.com/HytonightYX/noter-v2/tree/master/server/app/api/v1)
+- 数据库交互采用ORM，处理业务代码在/server/models/目录下 [业务代码](https://github.com/HytonightYX/noter-v2/tree/master/server/app/models)
+- 校验器在/server/validators/目录下 [校验器代码](https://github.com/HytonightYX/noter-v2/tree/master/server/app/validators)
 
 ## 系统架构
 ![image.png](https://i.loli.net/2019/12/23/tUmcZPMHG7sVNwJ.png)

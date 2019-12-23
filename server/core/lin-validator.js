@@ -12,7 +12,9 @@ const {
 	findMembers
 } = require('./util')
 
-
+/**
+ * 校验器父类
+ */
 class LinValidator {
 	constructor() {
 		this.data = {}

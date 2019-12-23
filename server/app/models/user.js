@@ -77,6 +77,37 @@ class User extends Model {
 			}
 		})
 	}
+
+	/**
+	 * 获得用户被点赞总数接口
+	 * @param id 用户id 
+	 */
+	static async likeTotal(id) {
+		// 防止循环引用
+		const { Note } = require('../models/note')
+		const total = await Note.sum('like_num', {
+			where: {
+				author: id
+			}
+		})
+		return total
+	}
+
+	/**
+	 * 获得用户被收藏总数接口
+	 * @param id 用户id 
+	 */
+	static async collectTotal(id) {
+		// 防止循环引用
+		const { Note } = require('../models/note')
+		const total = await Note.sum('collect_num', {
+			where: {
+				author: id
+			}
+		})
+		return total
+	}
+
 }
 
 User.init({

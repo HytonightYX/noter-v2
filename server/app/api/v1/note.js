@@ -55,6 +55,9 @@ router.get('/collect', async () => {
 	success('ok', notes)
 })
 
+/**
+ * 文章发布接口
+ */
 router.post('/publish', async ctx => {
 	const v = await new PublishNoteValidator().validate(ctx, { id: 'id' })
 	await Note.update({
@@ -102,6 +105,15 @@ router.get('/delete/:id', new Auth().m, async ctx => {
 	const v = await new PositiveIntegerValidator().validate(ctx, { id: 'id' })
 	await Note.deleteNote(v.get('path.id'))
 	success()
+})
+
+/**
+ * 用户请求文章编辑接口
+ */
+router.get('/modify/:id', new Auth().m, async ctx => {
+	const v = await new PositiveIntegerValidator().validate(ctx, { id: 'id' })
+	const content = await Note.modifyNote(v.get('path.id'), ctx.auth.uid)
+	success('开始更改', {content})
 })
 
 /**

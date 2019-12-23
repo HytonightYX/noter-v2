@@ -13,6 +13,9 @@ class InitManager {
 		InitManager.loadConfig()
 	}
 
+	/**
+	 * 路由初始化
+	 */
 	static initLoadRouters() {
 		const apiDir = `${process.cwd()}/app/api`
 		requireDirectory(module, apiDir, {
@@ -26,10 +29,17 @@ class InitManager {
 		}
 	}
 
+	/**
+	 * 全局http异常初始化
+	 */
 	static loadHttpException() {
 		global.errs = require('./httpException')
 	}
 
+	/**
+	 * 配置文件初始化
+	 * @param path 
+	 */
 	static loadConfig(path = '') {
 		const configPath = path || process.cwd() + '/config/config.js'
 		global.config = require(configPath)

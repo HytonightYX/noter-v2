@@ -2,6 +2,9 @@ const { Sequelize, Model, Op } = require('sequelize')
 const { db } = require('../../core/db')
 const { Tag } = require('../models/tag')
 
+/**
+ * 笔记文章业务
+ */
 class Note extends Model {
 	/**
 	 * 用于JSON序列化
@@ -148,6 +151,24 @@ class Note extends Model {
 				transaction: t
 			})
 		})
+	}
+
+	/**
+	 * 申请编辑文章方法
+	 * @param noteId 需要编辑的文章id
+	 * @param id 当前登陆用户id
+	 * 返回笔记的raw
+	 */
+	static async modifyNote(noteId, id) {
+		const content = await Note.findByPk(noteId, {
+			attributes: { exclude: ['html'] }
+		})
+		if (!content) {
+			throw new global.errs.NotFound('文章不存在')
+		} else if (content.author !== id) {
+			throw new global.errs.NoteError('这不是您的文章')
+		}
+		return content
 	}
 
 	/**
