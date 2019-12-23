@@ -8,29 +8,29 @@ import { Link } from 'react-router-dom'
 import logo from '../../asset/img/logo-nobg-64.png'
 import './style.less'
 
-const menu = (
-	<AntMenu>
-		<AntMenu.Item>
-			<Link to='/profile'>
-				<div>个人主页</div>
-			</Link>
-		</AntMenu.Item>
-		<AntMenu.Item>
-			<a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
-				账号设置
-			</a>
-		</AntMenu.Item>
-		<AntMenu.Item>
-			<a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
-				退出登录
-			</a>
-		</AntMenu.Item>
-	</AntMenu>
-)
-
 export default withRouter(inject('userStore')(observer((props) => {
 
 	const currUser = props.userStore.currUser
+
+	const menu = (
+		<AntMenu>
+			<AntMenu.Item>
+				<Link to='/profile'>
+					<div>个人主页</div>
+				</Link>
+			</AntMenu.Item>
+			<AntMenu.Item>
+				<Link to='/setting'>
+					账号设置
+				</Link>
+			</AntMenu.Item>
+			<AntMenu.Item>
+				<a rel="noopener noreferrer" href="#" onClick={() => props.userStore.logout()}>
+					退出登录
+				</a>
+			</AntMenu.Item>
+		</AntMenu>
+	)
 
 	return (
 		<div className="g-nav-wrapper">
@@ -64,7 +64,7 @@ export default withRouter(inject('userStore')(observer((props) => {
 						>
 							<div className="user-icon">
 								<img
-									src="https://cdn.sspai.com/2019/09/24/8edfbb9b9780595e2977e095c1ee128a.png?imageMogr2/quality/95/thumbnail/!72x72r/gravity/Center/crop/72x72/interlace/1"
+									src={currUser.avatar}
 									alt=""/>
 							</div>
 						</Dropdown>}

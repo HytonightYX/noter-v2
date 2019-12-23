@@ -10,7 +10,7 @@ class UserStore {
 					console.log('SET TOKEN = '+ token)
 					window.localStorage.setItem('token', token)
 				} else {
-					console.log('CLEAR TOKEN = ')
+					console.log('CLEAR TOKEN')
 					window.localStorage.removeItem('token')
 				}
 			}
@@ -35,11 +35,9 @@ class UserStore {
 					this.currUser = data.user
 					this.token = data.token
 					window.localStorage.setItem('token', data.token)
+					window.location.href = '/'
 				})
 				console.log(data)
-			})
-			.catch(e => {
-				alert('cuowu')
 			})
 			.finally(() => {
 				runInAction(() => {
@@ -49,9 +47,22 @@ class UserStore {
 	}
 
 	@action
+	loginWithToken() {
+		this.loading = true
+		axios_get('user/info')
+			.then(data => {
+				runInAction(() => {
+					this.currUser = data
+					this.loading = false
+					console.log('hahhahah', data)
+				})
+			})
+	}
+
+	@action
 	logout() {
 		this.currUser = null
-		this.token = 'logout'
+		this.token = null
 	}
 
 	@action

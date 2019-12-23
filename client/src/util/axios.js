@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { message } from 'antd'
-import authStore from '../store/index'
 import { encodeJWT } from './token'
 
 const BASE_URL = {
@@ -19,7 +18,8 @@ const axiosIns = axios.create({
  */
 axiosIns.interceptors.request.use(
 	config => {
-		const token = authStore.token || window.localStorage.getItem('jwt')
+		const token = window.localStorage.getItem('token')
+		console.log('userStore.token', token)
 		token && (config.headers.Authorization = encodeJWT(token))
 		return config
 	},
