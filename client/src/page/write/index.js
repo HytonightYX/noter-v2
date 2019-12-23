@@ -26,7 +26,14 @@ class Write extends React.Component {
 		data: [],
 		value: [],
 		fetching: false,
-		submitting: false
+		submitting: false,
+		qiniuToken: null
+	}
+
+	componentDidMount() {
+		const qiniuToken = getToken()
+		console.log('did mount 获取qiniu的token', qiniuToken)
+		this.setState({qiniuToken})
 	}
 
 	fetchUser = () => {
@@ -54,7 +61,7 @@ class Write extends React.Component {
 
 			this.props.form.setFieldsValue({
 				cover: info.file.response.hash,
-			});
+			})
 		}
 	}
 
@@ -92,6 +99,45 @@ class Write extends React.Component {
 		this.setState({qiniuToken})
 	}
 
+	myUploadFn = (param) => {
+		const serverURL = QINIU_SERVER
+		const xhr = new XMLHttpRequest
+		const fd = new FormData()
+		const token = this.state.qiniuToken
+
+		const successFn = (response) => {
+			// 假设服务端直接返回文件上传后的地址
+			// 上传成功后调用param.success并传入上传后的文件地址
+
+			console.log('上传成功', JSON.parse(xhr.responseText).hash)
+			param.success({
+				url: BASE_QINIU_URL + JSON.parse(xhr.responseText).hash
+			})
+		}
+
+		const progressFn = (event) => {
+			// 上传进度发生变化时调用param.progress
+			param.progress(event.loaded / event.total * 100)
+		}
+
+		const errorFn = (response) => {
+			// 上传发生错误时调用param.error
+			param.error({
+				msg: 'unable to upload.'
+			})
+		}
+
+		xhr.upload.addEventListener("progress", progressFn, false)
+		xhr.addEventListener("load", successFn, false)
+		xhr.addEventListener("error", errorFn, false)
+		xhr.addEventListener("abort", errorFn, false)
+
+		fd.append('file', param.file)
+		fd.append('token', token)
+		xhr.open('POST', serverURL, true)
+		xhr.send(fd)
+	}
+
 	render() {
 		const {getFieldDecorator} = this.props.form
 		const {fetching, data, submitting, imageHash, qiniuToken} = this.state
@@ -102,6 +148,12 @@ class Write extends React.Component {
 				<div className="ant-upload-text">上传题图</div>
 			</div>
 		)
+
+		const editorProps = {
+			media: {
+				uploadFn: this.myUploadFn
+			}
+		}
 
 		return (
 			<div className="g-write">
@@ -158,6 +210,7 @@ class Write extends React.Component {
 							}],
 						})(
 							<BraftEditor
+								{...editorProps}
 								ref={instance => this.editorInstance = instance}
 								className="m-editor"
 								placeholder="请输入正文内容"
