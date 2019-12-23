@@ -221,6 +221,8 @@ Note.init({
 	},
 	// 标题
 	title: Sequelize.STRING(255),
+	// 文章封面
+	cover: Sequelize.STRING(255),
 	// json内容
 	raw: Sequelize.TEXT,
 	// html内容
