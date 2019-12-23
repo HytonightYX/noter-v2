@@ -44,7 +44,7 @@ class Note extends React.Component {
 									alt=""/>
 							</span>
 							<span className="name">
-								HytonightYX
+								{note && note.author.userName}
 							</span>
 						</div>
 						<div className="time">1天前</div>

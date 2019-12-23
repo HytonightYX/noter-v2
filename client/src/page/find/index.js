@@ -8,20 +8,26 @@ import FixedBar from '../../component/FixedBar'
 import ImageLoader from '../../component/ImageLoader'
 import { axios_get } from '../../util/axios'
 import { FIND_MENU } from '../../constant/config'
+import { SYSTEM_CONFIG } from '../../constant/config'
 import LazyLoad from 'react-lazyload'
 import dayjs from 'dayjs'
+
+const {BASE_QINIU_URL} = SYSTEM_CONFIG.qiniu
 
 class Find extends React.Component {
 	state = {
 		currtab: 'all', // all || follow || hot || tag
 		currNotes: [],
-		loading: false
+		loading: false,
+		fetchingNote: false
 	}
 
 	async componentDidMount() {
+		this.setState({fetchingNote: true})
 		axios_get('note')
 			.then(data => {
 				this.setState({currNotes: data})
+				this.setState({fetchingNote: false})
 			})
 	}
 
@@ -51,23 +57,23 @@ class Find extends React.Component {
 
 	render() {
 
-		const {currtab, currNotes, loading} = this.state
+		const {currtab, currNotes, loading, fetchingNote} = this.state
 
 		const NoteCard = ({note}) => (
 			<div className="note-card">
-				<div style={{width: 400}}>
+				<div style={{width: 400, overflow: 'hidden'}}>
 					<LazyLoad
 						height={200}
 						once
 						throttle={250}
 						placeholder={
-							<Placeholder style={{ height: 200, width: 400 }}>
-								<Placeholder.Image />
+							<Placeholder style={{height: 200, width: 400}}>
+								<Placeholder.Image/>
 							</Placeholder>
 						}
 					>
 						<ImageLoader
-							src={`https://picsum.photos/400/200?random=${Math.floor(Math.random() * 1000)}`}
+							src={note.cover ? BASE_QINIU_URL + note.cover : `https://picsum.photos/400/200?random=${Math.floor(Math.random() * 1000)}`}
 						/>
 					</LazyLoad>
 				</div>
@@ -99,8 +105,6 @@ class Find extends React.Component {
 
 		return (
 			<div className="g-find">
-
-
 				<div className="m-find-tab">
 					<ul>
 						{FIND_MENU.map(item =>
@@ -116,9 +120,11 @@ class Find extends React.Component {
 						loading ?
 							<Icon type="loading" style={{fontSize: 48}}/>
 							:
-							<div className="note-list">
-								{currNotes.map((item, i) => <NoteCard key={`node-${i}`} note={item}/>)}
-							</div>
+							<Spin spinning={fetchingNote} indicator={<Icon type="loading" style={{fontSize: 32, color: '#fd281a'}}/>}>
+								<div className="note-list">
+									{currNotes.map((item, i) => <NoteCard key={`node-${i}`} note={item}/>)}
+								</div>
+							</Spin>
 					}
 
 					<div className="right-bar">
