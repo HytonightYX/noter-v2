@@ -1,5 +1,6 @@
 import React, { lazy } from 'react'
 import { Router, Route, Switch } from 'react-router-dom'
+
 import LoginGuard from './component/LoginGuard'
 import NavWrapper from './component/NavWrapper'
 
@@ -34,6 +35,7 @@ class App extends React.Component {
 								<Route exact path='/write' component={Write}/>
 								<Route exact path='/note' component={Note}/>
 								<Route exact path='/profile' component={Profile}/>
+								<Route exact path='/note/:id' component={Note}/>
 							</Switch>
 						</LoginGuard>
 					</div>

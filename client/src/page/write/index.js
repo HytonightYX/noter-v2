@@ -13,7 +13,7 @@ import { axios_get, axios_post } from '../../util/axios'
 const {Option} = Select
 
 @Form.create()
-@inject('authStore')
+@inject()
 @observer
 class Write extends React.Component {
 	constructor(props) {
@@ -29,32 +29,13 @@ class Write extends React.Component {
 		submitting: false
 	}
 
-	componentDidMount() {
-		axios_post('token', {
-			account: '18196777756@163.com',
-			secret: '123qwe',
-			type: 101
-		}).then(data => {
-			console.log(data)
-			this.props.authStore.setToken(data.token)
-		})
-	}
-
-	fetchUser = value => {
-		console.log('fetching user', value)
-		this.lastFetchId += 1
-		const fetchId = this.lastFetchId
+	fetchUser = () => {
 		this.setState({data: [], fetching: true})
-		fetch('https://randomuser.me/api/?results=5')
-			.then(response => response.json())
+		axios_get('tag')
 			.then(body => {
-				if (fetchId !== this.lastFetchId) {
-					// for fetch callback order
-					return
-				}
-				const data = body.results.map(user => ({
-					text: `${user.name.first} ${user.name.last}`,
-					value: user.login.username,
+				const data = body.map(tag => ({
+					text: tag.name,
+					value: tag.id,
 				}))
 				this.setState({data, fetching: false})
 			})
@@ -72,13 +53,12 @@ class Write extends React.Component {
 		event.preventDefault()
 		this.props.form.validateFields((error, values) => {
 			if (!error) {
-				console.log(values)
+
 				const submitData = {
 					title: values.title,
 					raw: values.content.toRAW(),
 					html: values.content.toHTML(),
-					tag: ['大一', '高数'].join(','),
-					author: 25,
+					tag: values.tag.map(item => item.key).join(','),
 					status: 2
 				}
 
@@ -153,22 +133,28 @@ class Write extends React.Component {
 					</Form.Item>
 
 					<Form.Item className="m-flex-row">
-						<Select
-							size="large"
-							mode="multiple"
-							labelInValue
-							value={value}
-							placeholder="选择标签..."
-							notFoundContent={fetching ? <Spin size="small"/> : null}
-							filterOption={false}
-							onSearch={this.fetchUser}
-							onChange={this.handleChange}
-							style={{width: '400px'}}
-						>
-							{data.map(d => (
-								<Option key={d.value}>{d.text}</Option>
-							))}
-						</Select>
+						{getFieldDecorator('tag', {
+							rules: [{
+								required: true,
+							}],
+						})(
+							<Select
+								size="large"
+								mode="multiple"
+								labelInValue
+								placeholder="选择标签..."
+								notFoundContent={fetching ? <Spin size="small"/> : null}
+								filterOption={false}
+								onSearch={this.fetchUser}
+								onChange={this.handleChange}
+								style={{width: '400px'}}
+							>
+								{data.map(d => (
+									<Option key={d.value}>{d.text}</Option>
+								))}
+							</Select>
+						)}
+
 						<Button size="large" htmlType="submit" loading={submitting}>提交</Button>
 					</Form.Item>
 				</Form>

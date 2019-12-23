@@ -1,10 +1,7 @@
-import { inject, observer } from 'mobx-react'
 import * as React from 'react'
-import { Form, Input as AntInput, Button, Select, Spin, Icon } from 'antd'
+import { Form, Button, Icon } from 'antd'
 import './style.less'
-import OauthPopup from 'react-oauth-popup'
 import { GITHUB_LOGIN } from '../../constant/api'
-import { axios_get } from '../../util/axios'
 
 @Form.create()
 class Login extends React.Component {
@@ -20,10 +17,8 @@ class Login extends React.Component {
 		window.location.href = GITHUB_LOGIN
 	}
 
-	onCode = (code) => console.log("wooooo a code", code);
-
 	render() {
-		const {getFieldDecorator, getFieldsError, getFieldError, isFieldTouched} = this.props.form
+		const {getFieldDecorator} = this.props.form
 
 		return (
 			<div className="g-login">
