@@ -14,51 +14,22 @@ import dayjs from 'dayjs'
 
 const {BASE_QINIU_URL} = SYSTEM_CONFIG.qiniu
 
-class Find extends React.Component {
+class MyNote extends React.Component {
 	state = {
-		currtab: 'all', // all || follow || hot || tag
-		currNotes: [],
-		loading: false,
-		fetchingNote: false
+		myNotes: [],
+		loading: false
 	}
 
 	async componentDidMount() {
-		this.setState({fetchingNote: true})
-		axios_get('note')
+		this.setState({loading: true})
+		axios_get('note/mine')
 			.then(data => {
-				this.setState({currNotes: data})
-				this.setState({fetchingNote: false})
+				this.setState({myNotes: data.notes, loading: false})
 			})
 	}
 
-	/**
-	 * 修改标签
-	 */
-	doChangeTab = (e) => {
-		let key
-		switch (e.target.innerText) {
-			case '所有':
-				key = 'all'
-				break
-			case '关注':
-				key = 'follow'
-				break
-			case '最热':
-				key = 'hot'
-				break
-			case '标签':
-				key = 'tag'
-				break
-			default:
-				key = 'all'
-		}
-		this.setState({currtab: key})
-	}
-
 	render() {
-
-		const {currtab, currNotes, loading, fetchingNote} = this.state
-
+		const {myNotes, loading} = this.state
 		const NoteCard = ({note}) => (
 			<div className="note-card">
 				<div style={{width: 400, overflow: 'hidden'}}>
@@ -105,27 +76,12 @@ class Find extends React.Component {
 
 		return (
 			<div className="g-find">
-				<div className="m-find-tab">
-					<ul>
-						{FIND_MENU.map(item =>
-							<li key={item.key} onClick={this.doChangeTab}
-							    className={`${currtab === item.key && 'active'}`}
-							>{item.title}</li>
-						)}
-					</ul>
-				</div>
-
 				<div className="m-find">
-					{
-						loading ?
-							<Icon type="loading" style={{fontSize: 48}}/>
-							:
-							<Spin spinning={fetchingNote} indicator={<Icon type="loading" style={{fontSize: 32, color: '#fd281a'}}/>}>
-								<div className="note-list">
-									{currNotes.map((item, i) => <NoteCard key={`node-${i}`} note={item}/>)}
-								</div>
-							</Spin>
-					}
+					<Spin spinning={loading} indicator={<Icon type="loading" style={{fontSize: 32, color: '#fd281a'}}/>}>
+						<div className="note-list">
+							{myNotes.map((item, i) => <NoteCard key={`node-${i}`} note={item}/>)}
+						</div>
+					</Spin>
 
 					<div className="right-bar">
 
@@ -138,4 +94,4 @@ class Find extends React.Component {
 	}
 }
 
-export default Find
+export default MyNote
