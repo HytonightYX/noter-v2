@@ -16,8 +16,13 @@ class LoginGuard extends React.Component {
 
 	UNSAFE_componentWillMount() {
 		const code = queryString.parse(this.props.location.search).code
+		const token = window.localStorage.getItem('token')
 		if (code) {
 			this.props.userStore.login(code)
+		} else if (token) {
+			// 该用户尚未登出, 保持登录状态
+			console.log('该用户尚未登出, 保持登录状态')
+			this.props.userStore.loginWithToken()
 		}
 	}
 

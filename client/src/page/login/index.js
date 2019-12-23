@@ -7,8 +7,6 @@ import { GITHUB_LOGIN } from '../../constant/api'
 import { axios_get } from '../../util/axios'
 
 @Form.create()
-@inject('authStore')
-@observer
 class Login extends React.Component {
 
 	state = {
@@ -40,14 +38,6 @@ class Login extends React.Component {
 							)}
 						</Form.Item>
 					</Form>
-
-					<OauthPopup
-						url={GITHUB_LOGIN}
-						onCode={this.onCode}
-					>
-						<div>Click me to open a Popup</div>
-					</OauthPopup>
-
 				</div>
 			</div>
 		)
