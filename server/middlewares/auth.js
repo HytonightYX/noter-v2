@@ -18,7 +18,7 @@ class Auth {
 			// 检测传过来的Token,如果合法才next
 			// 和前端约定如何传递令牌(body/header...)
 			// HTTP  规定了一种身份验证机制 HttpBasicAuth
-			let msg = 'Token不合法'
+			let msg = 'Token不合法,请重新登陆'
 			let decode
 			const userToken = basicAuth(ctx.req)
 

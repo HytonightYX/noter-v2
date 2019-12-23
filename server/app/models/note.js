@@ -121,9 +121,23 @@ class Note extends Model {
 	 * @param id 
 	 */
 	static async queryNoteById(id) {
-		const content = await Note.findByPk(id, {
-			attributes: { exclude: ['raw'] }
+		let content = await db.query(
+			`
+			SELECT n.title,n.cover,n.html,n.tag,n.like_num,n.collect_num,u.avatar,n.author,n.updated_at,u.user_name
+			FROM note n 
+			LEFT JOIN user u ON n.author = u.id
+			WHERE n.id = ${id}
+			`
+		)
+		content = content[0][0]
+		let tagObj = {}
+		await Tag.findAll({raw: true}).map(item => {
+			tagObj[item.id] = item.name
 		})
+		let tagIds = content.tag.split(',').map(item => {
+			return {id: item, name: tagObj[item]}
+		})
+		content.tag = tagIds
 		return content
 	}
 
