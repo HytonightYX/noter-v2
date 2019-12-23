@@ -95,7 +95,6 @@ class Write extends React.Component {
 
 	getUploadToken = () => {
 		const qiniuToken = getToken()
-		console.log('获取qiniu的token', qiniuToken)
 		this.setState({qiniuToken})
 	}
 
@@ -106,12 +105,8 @@ class Write extends React.Component {
 		const token = this.state.qiniuToken
 
 		const successFn = (response) => {
-			// 假设服务端直接返回文件上传后的地址
-			// 上传成功后调用param.success并传入上传后的文件地址
-
-			console.log('上传成功', JSON.parse(xhr.responseText).hash)
 			param.success({
-				url: BASE_QINIU_URL + JSON.parse(xhr.responseText).hash
+				url: BASE_QINIU_URL + JSON.parse(xhr.responseText).hash + '?imageslim'
 			})
 		}
 
@@ -176,7 +171,7 @@ class Write extends React.Component {
 										onChange={this.handleChange}
 									>
 										{imageHash ?
-											<img src={BASE_QINIU_URL + imageHash} alt="image" style={{width: '100%'}}/> : uploadButton}
+											<img src={BASE_QINIU_URL + imageHash + '?imageslim'} alt="image" style={{width: '100%'}}/> : uploadButton}
 									</Upload>
 								</div>
 							</div>

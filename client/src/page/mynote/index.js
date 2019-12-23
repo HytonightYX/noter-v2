@@ -28,6 +28,10 @@ class MyNote extends React.Component {
 			})
 	}
 
+	doDel = (nid) => {
+
+	}
+
 	render() {
 		const {myNotes, loading} = this.state
 		const NoteCard = ({note}) => (
@@ -44,7 +48,7 @@ class MyNote extends React.Component {
 						}
 					>
 						<ImageLoader
-							src={note.cover ? BASE_QINIU_URL + note.cover : `https://picsum.photos/400/200?random=${Math.floor(Math.random() * 1000)}`}
+							src={note.cover ? BASE_QINIU_URL + note.cover + '?imageslim' : `https://picsum.photos/400/200?random=${Math.floor(Math.random() * 1000)}`}
 						/>
 					</LazyLoad>
 				</div>
@@ -56,12 +60,9 @@ class MyNote extends React.Component {
 
 					<div className="note-attr">
 
-						<div className="user">
-							<img className="user-icon"
-							     src={note.avatar}
-							     alt=""/>
-							<span className="username">{note.user_name}</span>
-							<span className="update-time">{dayjs(note.updatedAt).format('MM月DD日')}</span>
+						<div className="left">
+							<Link to={`/note/edit/${note.id}`}><span>编辑</span></Link>
+							<span onClick={this.doDel}>删除</span>
 						</div>
 
 						<div className="like">

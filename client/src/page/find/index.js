@@ -73,7 +73,7 @@ class Find extends React.Component {
 						}
 					>
 						<ImageLoader
-							src={note.cover ? BASE_QINIU_URL + note.cover : `https://picsum.photos/400/200?random=${Math.floor(Math.random() * 1000)}`}
+							src={note.cover ? BASE_QINIU_URL + note.cover + '?imageslim' : `https://picsum.photos/400/200?random=${Math.floor(Math.random() * 1000)}`}
 						/>
 					</LazyLoad>
 				</div>
