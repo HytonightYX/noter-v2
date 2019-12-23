@@ -91,11 +91,7 @@ router.post('/upload', new Auth().m, upload.single('file'), ctx => {
  */
 router.get('/mine', new Auth().m, async ctx => {
 	const notes = await Note.queryNoteByAuthor(ctx.auth.uid)
-	ctx.body = {
-		code: 201,
-		data: notes,
-		msg: 'ok'
-	}
+	success('已更新', { notes })
 })
 
 /**
