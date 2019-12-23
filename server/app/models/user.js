@@ -39,7 +39,7 @@ class User extends Model {
 	static async getUserByGithubId(gitUser) {
 		const user = await User.findOne({
 			where: {
-				githubId: githubId,
+				githubId: gitUser.id,
 			}
 		})
 		if (user) {

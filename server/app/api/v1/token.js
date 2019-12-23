@@ -59,12 +59,9 @@ router.get('/github', async ctx => {
 	if (r && r.status === 200) {
 		const tr = await axios.get('https://api.github.com/user?' + r.data)
 		if (tr && tr.status === 200) {
-			const userName = tr.data.login
-			const githubId = tr.data.id
-			const email = tr.data.email
-			const avatar = tr.data.avatar_url
-			const { token, user } = await githubLogin(githubId, userName, email, avatar)
-			success('ok', { token, user, avatar })
+			const { token, user } = await githubLogin(tr.data)
+		
+		success('ok', { token, user, type: 233 })
 		}
 	}
 })
