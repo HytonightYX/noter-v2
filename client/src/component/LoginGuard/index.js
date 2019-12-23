@@ -26,7 +26,7 @@ class LoginGuard extends React.Component {
 			<>
 				{this.loading ?
 					<div className="g-login_guard">
-						<Spin indicator={<Icon type="loading" style={{fontSize: 48}}/>}/>
+						<Spin indicator={<Icon type="loading" style={{fontSize: 48}}/>} tip='拉取用户信息...'/>
 					</div> : this.props.children}
 			</>
 		)
