@@ -55,6 +55,9 @@ router.get('/collect', async () => {
 	success('ok', notes)
 })
 
+/**
+ * 文章发布接口
+ */
 router.post('/publish', async ctx => {
 	const v = await new PublishNoteValidator().validate(ctx, { id: 'id' })
 	await Note.update({

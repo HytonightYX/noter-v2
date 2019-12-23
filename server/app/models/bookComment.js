@@ -1,6 +1,9 @@
 const { db } = require('../../core/db')
 const { Sequelize, Model } = require('sequelize')
 
+/**
+ * 短评业务
+ */
 class Comment extends Model {
 	/**
 	 * 增加评论
@@ -27,6 +30,10 @@ class Comment extends Model {
 		}
 	}
 
+	/**
+	 * 获取评论
+	 * @param bookId 
+	 */
 	static async getComments(bookId) {
 		return await Comment.findAll({
 			where: { bookId: bookId }

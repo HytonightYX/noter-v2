@@ -4,8 +4,15 @@ const { User } = require('../models/user')
 const { generateToken } = require('../../core/util')
 const { Auth } = require('../../middlewares/auth')
 
+/**
+ * 微信登陆服务
+ */
 class MXManager {
 
+	/**
+	 * 生成token
+	 * @param code 
+	 */
 	static async codeToToken(code) {
 		// 格式化字符串
 		const url = util.format(

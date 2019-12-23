@@ -25,7 +25,7 @@ router.post('/register', async (ctx, next) => {
  */
 router.get('/info', new Auth().m, async ctx => {
 	const user = await User.getUserInfo(ctx.auth.uid)
-	success('ok', user)
+	success('更新成功', user)
 })
 
 /**
@@ -34,7 +34,23 @@ router.get('/info', new Auth().m, async ctx => {
 router.post('/modify', new Auth().m, async ctx => {
 	const v = await new UserModifyValidator().validate(ctx)
 	await User.modifyInfo(v.get('body'), ctx.auth.uid)
-	success()
+	success('信息更新成功')
+})
+
+/**
+ * 用户所获得的所有点赞总数接口
+ */
+router.get('/like', new Auth().m, async ctx => {
+	const total = await User.likeTotal(ctx.auth.uid)
+	success(null, {total})
+})
+
+/**
+ * 用户所获得的所有收藏总数接口
+ */
+router.get('/collect', new Auth().m, async ctx => {
+	const total = await User.collectTotal(ctx.auth.uid)
+	success(null, {total})
 })
 
 

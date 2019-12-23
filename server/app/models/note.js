@@ -2,6 +2,9 @@ const { Sequelize, Model, Op } = require('sequelize')
 const { db } = require('../../core/db')
 const { Tag } = require('../models/tag')
 
+/**
+ * 笔记文章业务
+ */
 class Note extends Model {
 	/**
 	 * 用于JSON序列化

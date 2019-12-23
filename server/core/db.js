@@ -2,7 +2,9 @@ const Sequelize = require('sequelize')
 const { dbName, user, pwd, host, port } = require('../config/config').database
 const { Model } = require('sequelize')
 const { unset, clone, isArray } = require('lodash')
-
+/**
+ * Sequelize数据库配置
+ */
 const db = new Sequelize(dbName, user, pwd, {
 	dialect: 'mysql',     	// 数据库类型
 	host: host,

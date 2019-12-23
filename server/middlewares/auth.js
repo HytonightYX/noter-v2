@@ -1,6 +1,9 @@
 const basicAuth = require('basic-auth')
 const jwt = require('jsonwebtoken')
 
+/**
+ * 用户认证中间件
+ */
 class Auth {
 	constructor(level) {
 		this.level = level || 1
