@@ -1,3 +1,5 @@
+import secret from '../secret'
+
 export const MENU_MAIN = [
 	{title: '发现', icon: 'lightbulb outline', path:'/'},
 	{title: '我的笔记', icon: 'book', path:'/mynote'},
@@ -15,4 +17,10 @@ export const SYSTEM_CONFIG = {
 		client_id: 'af0e6151dbd9588a9e66',
 		scope: 'user:email'
 	},
+	qiniu: {
+		AccessKey: '25E0vVorHfwQElXxDFiyo3dydVPg7gpmAy7eRjrt',
+		SecretKey: secret.qiniu.SecretKey,
+		BASE_QINIU_URL: 'http://q2yis6hub.bkt.clouddn.com/',
+		QINIU_SERVER: 'https://upload-z2.qiniup.com'
+	}
 }

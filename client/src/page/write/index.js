@@ -1,16 +1,16 @@
-import { computed } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import * as React from 'react'
-import { Input } from 'semantic-ui-react'
 import BraftEditor from 'braft-editor'
-import { Form, Input as AntInput, Button, Icon, Select, Spin, message } from 'antd'
+import { Form, Input as AntInput, Button, Icon, Select, Spin, message, Upload, Modal } from 'antd'
 import debounce from 'lodash/debounce'
-
+import { SYSTEM_CONFIG } from '../../constant/config'
 import 'braft-editor/dist/index.css'
 import './style.less'
 import { axios_get, axios_post } from '../../util/axios'
+import { getToken } from '../../util/qiniu'
 
 const {Option} = Select
+const {BASE_QINIU_URL, QINIU_SERVER} = SYSTEM_CONFIG.qiniu
 
 @Form.create()
 @inject()
@@ -41,12 +41,21 @@ class Write extends React.Component {
 			})
 	}
 
-	handleChange = value => {
-		this.setState({
-			value,
-			data: [],
-			fetching: false,
-		})
+	handleChange = info => {
+		if (info.file.status === 'uploading') {
+			this.setState({loading: true})
+			return
+		}
+		if (info.file.status === 'done') {
+			this.setState({
+				loading: true,
+				imageHash: info.file.response.hash
+			})
+
+			this.props.form.setFieldsValue({
+				cover: info.file.response.hash,
+			});
+		}
 	}
 
 	handleSubmit = (event) => {
@@ -59,6 +68,7 @@ class Write extends React.Component {
 					raw: values.content.toRAW(),
 					html: values.content.toHTML(),
 					tag: values.tag.map(item => item.key).join(','),
+					cover: values.cover,
 					status: 2
 				}
 
@@ -76,23 +86,46 @@ class Write extends React.Component {
 		})
 	}
 
+	getUploadToken = () => {
+		const qiniuToken = getToken()
+		console.log('获取qiniu的token', qiniuToken)
+		this.setState({qiniuToken})
+	}
+
 	render() {
-		const {getFieldDecorator, getFieldsError, getFieldError, isFieldTouched} = this.props.form
-		const controls = ['bold', 'italic', 'underline', 'text-color', 'separator', 'link', 'separator', 'media']
-		const {fetching, data, value, submitting} = this.state
+		const {getFieldDecorator} = this.props.form
+		const {fetching, data, submitting, imageHash, qiniuToken} = this.state
+
+		const uploadButton = (
+			<div>
+				<Icon type="plus"/>
+				<div className="ant-upload-text">上传题图</div>
+			</div>
+		)
 
 		return (
 			<div className="g-write">
-				<Form onSubmit={this.handleSubmit} className="m-form">
 
+				<Form onSubmit={this.handleSubmit} className="m-form">
 					<Form.Item style={{marginBottom: 0}}>
-						{getFieldDecorator('image', {
+						{getFieldDecorator('cover', {
 							rules: [{required: false, message: '请上传题图'}],
-							initialValue: ''
 						})(
 							<div className="upload">
 								<div style={{background: '#666666', width: 600, height: 250, margin: '20px auto 30px'}}>
-
+									<Upload
+										name="file"
+										listType="picture-card"
+										className="avatar-uploader"
+										showUploadList={false}
+										action={QINIU_SERVER}
+										data={{token: qiniuToken}}
+										beforeUpload={this.getUploadToken}
+										onChange={this.handleChange}
+									>
+										{imageHash ?
+											<img src={BASE_QINIU_URL + imageHash} alt="image" style={{width: '100%'}}/> : uploadButton}
+									</Upload>
 								</div>
 							</div>
 						)}
@@ -146,7 +179,6 @@ class Write extends React.Component {
 								notFoundContent={fetching ? <Spin size="small"/> : null}
 								filterOption={false}
 								onSearch={this.fetchUser}
-								onChange={this.handleChange}
 								style={{width: '400px'}}
 							>
 								{data.map(d => (
