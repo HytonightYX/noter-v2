@@ -57,7 +57,6 @@ class Favor extends Model {
 		// 获取note实体
 		const note = await Note.findOne({
 			where: {
-				author: uid,
 				id: artId
 			}
 		})
@@ -101,7 +100,6 @@ class Favor extends Model {
 		// 获取note实体
 		const note = await Note.findOne({
 			where: {
-				author: uid,
 				id: artId
 			}
 		})
@@ -128,12 +126,13 @@ class Favor extends Model {
 	 * @param artId 文章id
 	 */
 	static async collect(uid, artId) {
+		console.log(uid, artId)
 		const favor = await Favor.findOne({
 			where: {
 				uid: uid,
 				artId: artId,
 				type: 2
-			}
+			}, raw: true
 		})
 		// 如果收藏过了不允许收藏
 		if (favor) {
@@ -142,7 +141,6 @@ class Favor extends Model {
 		// 获取note实体
 		const note = await Note.findOne({
 			where: {
-				author: uid,
 				id: artId
 			}
 		})
@@ -186,7 +184,6 @@ class Favor extends Model {
 		// 获取note实体
 		const note = await Note.findOne({
 			where: {
-				author: uid,
 				id: artId
 			}
 		})

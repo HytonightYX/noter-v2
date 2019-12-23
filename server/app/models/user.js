@@ -108,6 +108,21 @@ class User extends Model {
 		return total
 	}
 
+	/**
+	 * 获得用户文章总数接口
+	 * @param id 用户id 
+	 */
+	static async noteTotal(id) {
+		// 防止循环引用
+		const { Note } = require('../models/note')
+		const total = await Note.count({
+			where: {
+				author: id
+			}
+		})
+		return total
+	}
+
 }
 
 User.init({

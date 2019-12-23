@@ -61,6 +61,7 @@ router.get('/dislike/:noteId', new Auth(8).m, async ctx => {
  * note收藏接口
  */
 router.get('/collect/:noteId', new Auth(8).m, async ctx => {
+	console.log('aaa')
 	const v = await new LikeValidator().validate(ctx, { id: 'noteId' })
 	await Favor.collect(
 		ctx.auth.uid,

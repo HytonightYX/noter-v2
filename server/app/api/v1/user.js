@@ -53,5 +53,18 @@ router.get('/collect', new Auth().m, async ctx => {
 	success(null, {total})
 })
 
+router.get('/status', new Auth().m, async ctx => {
+	const r = await Promise.all([
+		User.likeTotal(ctx.auth.uid),
+		User.collectTotal(ctx.auth.uid),
+		User.noteTotal(ctx.auth.uid)
+	])
+	success(null, {
+		likeNum: r[0],
+		collectNum: r[1],
+		noteNum: r[2]
+	})
+})
+
 
 module.exports = router
