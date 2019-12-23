@@ -18,6 +18,7 @@ const catchError = async (ctx, next) => {
 				data: error.data,
 				message: error.message,
 			}
+			ctx.status = error.code
 		} else {
 			ctx.body = {
 				message: '捕获到未知异常:\n' + error.stack,

@@ -1,7 +1,6 @@
 const { Sequelize, Model, Op } = require('sequelize')
 const { db } = require('../../core/db')
 const { Tag } = require('../models/tag')
-const { User } = require('../models/user')
 
 class Note extends Model {
 	/**
@@ -42,22 +41,7 @@ class Note extends Model {
 			order by n.updated_at DESC
 			`
 			, { raw: true })
-		let tagObj = {}
-
-		await Tag.findAll({ raw: true }).map(item => {
-			tagObj[item.id] = item.name
-		})
-
-
-		notes = notes[0].map(item => {
-
-			let tags = item.tag.split(',').map(item => {
-				return { id: item, name: tagObj[item] }
-			})
-			item.tags = tags
-			return item
-		})
-
+		notes = this.common(notes)
 		return notes
 	}
 
@@ -65,22 +49,32 @@ class Note extends Model {
 	 * 按点赞数目降序排序
 	 */
 	static async showLikedNotes() {
-		return await Note.findAll({
-			order: [
-				['likeNum', 'DESC']
-			]
-		})
+		let notes = await db.query(
+			`
+			SELECT u.user_name, u.avatar, n.*
+			FROM note n 
+			LEFT JOIN user u ON n.author = u.id
+			order by n.like_num DESC
+			`
+			, { raw: true })
+		notes = this.common(notes)
+		return notes
 	}
 
 	/**
 	 * 按收藏数目降序排序
 	 */
 	static async showCollectedNotes() {
-		return await Note.findAll({
-			order: [
-				['collectNum', 'DESC']
-			]
-		})
+		let notes = await db.query(
+			`
+			SELECT u.user_name, u.avatar, n.*
+			FROM note n 
+			LEFT JOIN user u ON n.author = u.id
+			order by n.collect_num DESC
+			`
+			, { raw: true })
+		notes = this.common(notes)
+		return notes
 	}
 
 	/**
@@ -88,16 +82,17 @@ class Note extends Model {
 	 * @param title 
 	 */
 	static async queryNoteByTitle(title) {
-		return await Note.findAll({
-			where: {
-				title: {
-					[Op.like]: `%${title}%`
-				},
-				order: [
-					['updatedAt', 'DESC']
-				]
-			}
-		})
+		let notes = await db.query(
+			`
+			SELECT u.user_name, u.avatar, n.*
+			FROM note n 
+			LEFT JOIN user u ON n.author = u.id
+			WHERE n.title LIKE '%${title}%'
+			order by n.updated_at DESC
+			`
+			, { raw: true })
+		notes = this.common(notes)
+		return notes
 	}
 
 	/**
@@ -105,14 +100,17 @@ class Note extends Model {
 	 * @param id 用户ID 
 	 */
 	static async queryNoteByAuthor(id) {
-		return await Note.findAll({
-			where: {
-				author: id
-			},
-			order: [
-				['updatedAt', 'DESC']
-			]
-		})
+		let notes = await db.query(
+			`
+			SELECT u.user_name, u.avatar, n.*
+			FROM note n 
+			LEFT JOIN user u ON n.author = u.id
+			WHERE n.author = ${id}
+			order by n.updated_at DESC
+			`
+			, { raw: true })
+		notes = this.common(notes)
+		return notes
 	}
 
 	/**
@@ -169,6 +167,28 @@ class Note extends Model {
 			}
 		})
 	}
+
+	/**
+	 * 获取文章视图公共方法
+	 * @param notes 
+	 */
+	static async common(notes) {
+		let tagObj = {}
+		await Tag.findAll({ raw: true }).map(item => {
+			tagObj[item.id] = item.name
+		})
+
+		notes = notes[0].map(item => {
+
+			let tags = item.tag.split(',').map(item => {
+				return { id: item, name: tagObj[item] }
+			})
+			item.tags = tags
+			return item
+		})
+		return notes
+	}
+
 }
 
 Note.init({

@@ -39,7 +39,7 @@ class User extends Model {
 	static async getUserByGithubId(gitUser) {
 		const user = await User.findOne({
 			where: {
-				githubId: githubId,
+				githubId: gitUser.id,
 			}
 		})
 		if (user) {
@@ -56,13 +56,18 @@ class User extends Model {
 	}
 
 	/**
-	 * 获取用户
+	 * 获取用户信息
 	 * @param id 用户id
 	 */
 	static async getUserInfo(id) {
-		return await User.findOne({ where: { id: id } })
+		return await User.findByPk(id)
 	}
 
+	/**
+	 * 修改用户信息
+	 * @param info 更新信息
+	 * @param id 用户id
+	 */
 	static async modifyInfo(info, id) {
 		return await User.update({
 			...info
