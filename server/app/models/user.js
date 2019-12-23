@@ -36,20 +36,21 @@ class User extends Model {
 	 * @param userName github的用户名
 	 * @param email github绑定的用户邮箱
 	 */
-	static async getUserByGithubId(githubId, userName, email, avatar) {
-		const gitUser = await User.findOne({
+	static async getUserByGithubId(gitUser) {
+		const user = await User.findOne({
 			where: {
 				githubId: githubId,
 			}
 		})
-		if (gitUser) {
-			return gitUser
+		if (user) {
+			return user
 		} else {
 			return await User.create({
-				githubId: githubId,
-				userName: userName,
-				email: email,
-				avatar: avatar
+				githubId: gitUser.id,
+				userName: gitUser.login,
+				email: gitUser.email,
+				avatar: gitUser.avatar_url,
+				desc: gitUser.bio
 			})
 		}
 	}
