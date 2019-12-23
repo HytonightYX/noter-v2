@@ -154,6 +154,24 @@ class Note extends Model {
 	}
 
 	/**
+	 * 申请编辑文章方法
+	 * @param noteId 需要编辑的文章id
+	 * @param id 当前登陆用户id
+	 * 返回笔记的raw
+	 */
+	static async modifyNote(noteId, id) {
+		const content = await Note.findByPk(noteId, {
+			attributes: { exclude: ['html'] }
+		})
+		if (!content) {
+			throw new global.errs.NotFound('文章不存在')
+		} else if (content.author !== id) {
+			throw new global.errs.NoteError('这不是您的文章')
+		}
+		return content
+	}
+
+	/**
 	 * 更新文章
 	 * @param note 文章实体 
 	 */

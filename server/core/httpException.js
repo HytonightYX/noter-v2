@@ -130,6 +130,18 @@ class TagError extends HttpException {
 	}
 }
 
+/**
+ * note异常
+ */
+class NoteError extends HttpException {
+	constructor(message, errorcode) {
+		super()
+		this.message = message || '笔记文章服务异常'
+		this.errorCode = errorcode || 80001
+		this.code = 400
+	}
+}
+
 module.exports = {
 	HttpException,
 	ParameterException,
@@ -142,5 +154,6 @@ module.exports = {
 	TagError,
 	CollectError,
 	CancelCollectError,
+	NoteError
 }
 

@@ -108,6 +108,15 @@ router.get('/delete/:id', new Auth().m, async ctx => {
 })
 
 /**
+ * 用户请求文章编辑接口
+ */
+router.get('/modify/:id', new Auth().m, async ctx => {
+	const v = await new PositiveIntegerValidator().validate(ctx, { id: 'id' })
+	const content = await Note.modifyNote(v.get('path.id'), ctx.auth.uid)
+	success('开始更改', {content})
+})
+
+/**
  * 文章更新接口
  */
 router.post('/update', new Auth().m, async ctx => {
