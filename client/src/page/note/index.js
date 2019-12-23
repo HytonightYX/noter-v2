@@ -3,11 +3,12 @@ import './style.less'
 import { withRouter } from 'react-router'
 import FixedBar from '../../component/FixedBar'
 import { axios_get } from '../../util/axios'
-
+import { SYSTEM_CONFIG } from '../../constant/config'
+const {BASE_QINIU_URL} = SYSTEM_CONFIG.qiniu
 @withRouter
 class Note extends React.Component {
 	state = {
-		note: null
+		note: {}
 	}
 
 	componentDidMount() {
@@ -28,7 +29,7 @@ class Note extends React.Component {
 				<div className="m-header">
 					<div className="header-img">
 						<img
-							src="https://cdn.sspai.com/2019/12/09/8ced19435f4edbb2fad9ff293544e69b.jpg?imageMogr2/quality/95/thumbnail/!1420x708r/gravity/Center/crop/1420x708/interlace/1 "
+							src={ note.cover ? BASE_QINIU_URL + note.cover + '?imageslim' : 'https://picsum.photos/600/300'}
 							alt=""/>
 					</div>
 
@@ -39,15 +40,13 @@ class Note extends React.Component {
 					<div className="info">
 						<div className="name">
 							<span className="user-icon">
-								<img
-									src="https://lh3.googleusercontent.com/-vZSpiRJhlvI/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rcjKyDWqpqX0LDNnx5QTyPm8zHg2g/photo.jpg?sz=46"
-									alt=""/>
+								<img src={note && note.avatar} alt=""/>
 							</span>
 							<span className="name">
-								{note && note.author.userName}
+								{note && note.user_name}
 							</span>
 						</div>
-						<div className="time">1天前</div>
+						<div className="time">{note.updated_at}</div>
 					</div>
 				</div>
 

@@ -3,13 +3,12 @@ import { message } from 'antd'
 import { encodeJWT } from './token'
 
 const BASE_URL = {
-	// development: 'http://127.0.0.1:3030/v1/',
 	development: 'http://172.22.203.129:3030/v1/',
 	production: 'http://yunxi.site:3030'
 }
 
 const axiosIns = axios.create({
-	timeout: 200000,
+	timeout: 2000,
 	baseURL: BASE_URL[process.env.NODE_ENV]
 })
 
@@ -40,26 +39,8 @@ axiosIns.interceptors.response.use(
 	error => {
 		// 这里的错误均为网络错误，非具体业务错误
 		if (error.response) {
-			// 根据请求失败的 http 状态码去给用户相应的提示
-			// let tips = error.response.status in httpCode ? httpCode[error.response.status] : error.response.data.message
-
-			if (error.response.status === 302) {
-				console.log(error.response.data)
-			}
-
-			// 资源不存在
-			if (error.response.status === 404) {
-				message.error('404: 资源获取失败', 0.7)
-			}
-
-			// token或者登陆失效情况下跳转到登录页面
-			if (error.response.status === 401) {
-				console.log('token或者登陆失效情况下跳转到登录页面')
-			}
-
 			return Promise.reject(error)
 		} else {
-			console.log(error)
 			return Promise.reject(new Error('请求超时, 请刷新重试'))
 		}
 	}
@@ -76,8 +57,15 @@ export const axios_get = (url, params = {}, config = {}) => {
 			resp_data.message && message.success(resp_data.message, 0.7)
 			resolve(resp_data.data)
 		}).catch(error => {
-			message.error(error.message, 0.7)
-			console.log('axios_get:', error)
+
+			if (error.response.status === 403) {
+				message.error('令牌不合法，请登录！', 0.7)
+				setTimeout(() => {
+					window.location.href = 'login'
+				}, 1000)
+			} else {
+				message.error(error.message, 0.7)
+			}
 		})
 	})
 }
@@ -93,7 +81,7 @@ export const axios_post = (url, data, config = {}) => {
 			resp_data.message && message.success(resp_data.message, 0.7)
 			resolve(resp_data.data)
 		}).catch(error => {
-			message.error(error, 0.7)
+			message.error(error.message, 0.7)
 			console.log('axios_post:', error)
 		})
 	})
