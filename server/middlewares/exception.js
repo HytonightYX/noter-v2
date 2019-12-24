@@ -29,6 +29,9 @@ const catchError = async (ctx, next) => {
 				case 404:
 					ctx.status = error.code
 					break
+				case 400:
+					ctx.status = 666
+					break	
 				default:
 					ctx.status = 200
 			}

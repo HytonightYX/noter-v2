@@ -84,7 +84,7 @@ class Favor extends Model {
 	 * @param artId 
 	 * @param uid 
 	 */
-	static async dislike(artId, uid) {
+	static async dislike(uid, artId) {
 		const favor = await Favor.findOne({
 			where: {
 				artId: artId,
@@ -92,7 +92,6 @@ class Favor extends Model {
 				uid: uid
 			}
 		})
-
 		// 当前用户还没点过赞,自然不能取消点赞
 		if (!favor) {
 			throw new global.errs.DislikeError()
