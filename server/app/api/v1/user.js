@@ -20,12 +20,18 @@ router.post('/register', async (ctx, next) => {
 	success()
 })
 
+router.post('/bind', new Auth().m, async (ctx) => {
+	const v = await new UserModifyValidator().validate(ctx)
+	await User.setEmailPwd(ctx.auth.uid, v.get('body'))
+	success('绑定成功', {ok: 1})
+})
+
 /**
  * 获取用户信息
  */
 router.get('/info', new Auth().m, async ctx => {
 	const user = await User.getUserInfo(ctx.auth.uid)
-	success('更新成功', user)
+	success('登陆成功', user)
 })
 
 /**
@@ -34,7 +40,7 @@ router.get('/info', new Auth().m, async ctx => {
 router.post('/modify', new Auth().m, async ctx => {
 	const v = await new UserModifyValidator().validate(ctx)
 	await User.modifyInfo(v.get('body'), ctx.auth.uid)
-	success('信息更新成功')
+	success('信息更新成功', {ok: 1})
 })
 
 /**

@@ -35,13 +35,42 @@ class Note extends Model {
 	/**
 	 * 按更新时间降序排序
 	 */
-	static async showAllNotes() {
+	static async showAllNotes(content = true) {
+		let sql =
+			`
+		SELECT u.user_name, u.avatar, n.*
+		FROM note n 
+		LEFT JOIN user u ON n.author = u.id
+		order by n.created_at DESC
+		`
+
+		if (!content) {
+			sql =
+				`
+				SELECT u.user_name, u.avatar, n.title,n.id,n.author,n.created_at,n.like_num,n.collect_num,n.tag,n.cover
+				FROM note n 
+				LEFT JOIN user u ON n.author = u.id
+				order by n.created_at DESC
+				`
+		}
+
+		let notes = await db.query(sql, { raw: true })
+		notes = this.common(notes)
+
+		return notes
+	}
+
+	/**
+	 * 按更新时间降序排序
+	 */
+	static async showHotNotes() {
 		let notes = await db.query(
 			`
-			SELECT u.user_name, u.avatar, n.*
+			SELECT u.user_name, u.avatar, n.title,n.tag,n.id
 			FROM note n 
 			LEFT JOIN user u ON n.author = u.id
-			order by n.created_at DESC
+			order by n.updated_at DESC
+			LIMIT 0,3
 			`
 			, { raw: true })
 		notes = this.common(notes)
@@ -190,7 +219,6 @@ class Note extends Model {
 	 * @param note 文章实体 
 	 */
 	static async updateNote(note) {
-		console.log(note)
 		const oldNote = Note.findByPk(note.id)
 		if (!oldNote) {
 			throw new global.errs.NotFound()
@@ -246,20 +274,28 @@ class Note extends Model {
 		}
 	}
 
+	/**
+	 * 根据标签获取文章
+	 * @param tag 
+	 */
 	static async queryNoteByTag(tag) {
-		let data = {}
+		let data = []
 		let notes = await db.query(
 			`
-			SELECT u.user_name, u.avatar, n.*
+			SELECT u.user_name, u.avatar, n.title,n.id,n.author,n.created_at,n.like_num,n.collect_num,n.tag,n.cover
 			FROM note n 
 			LEFT JOIN user u ON n.author = u.id
 			order by n.created_at DESC
 			`
 			, { raw: true })
 		notes = notes[0]
-		notes = notes.map(item => {
-
+		notes.map(item => {
+			let flag = item.tag.split(',').indexOf(String(tag))
+			if (flag !== -1) {
+				data.push(item)
+			}
 		})
+		return this.common([data])
 	}
 
 	/**

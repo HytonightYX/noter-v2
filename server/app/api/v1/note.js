@@ -4,7 +4,6 @@ const { AddNoteValidator, NoteValidator, PublishNoteValidator, PositiveIntegerVa
 const { Note } = require('../../models/note')
 const { success } = require('../../lib/helper')
 const { Auth } = require('../../../middlewares/auth')
-const basicAuth = require('basic-auth')
 const dayjs = require('dayjs')
 const multer = require('@koa/multer')
 
@@ -38,6 +37,22 @@ router.post('/add', new Auth().m, async ctx => {
 router.get('/', async () => {
 	const notes = await Note.showAllNotes()
 	success('已更新', notes)
+})
+
+/**
+ * 获取所有文章
+ */
+router.get('/list', async () => {
+	const notes = await Note.showAllNotes(false)
+	success('已更新', notes)
+})
+
+/**
+ * 获取最热文章
+ */
+router.get('/hot', async () => {
+	const notes = await Note.showHotNotes()
+	success(null, notes)
 })
 
 /**
@@ -75,7 +90,7 @@ router.post('/publish', async ctx => {
 router.get('/search/:title', async ctx => {
 	const v = await new NoteValidator().validate(ctx)
 	const notes = await Note.queryNoteByTitle(v.get('path.title'))
-	success('ok', notes)
+	success(null, notes)
 })
 
 /**
@@ -101,7 +116,7 @@ router.get('/mine', new Auth().m, async ctx => {
 router.get('/delete/:id', new Auth().m, async ctx => {
 	const v = await new PositiveIntegerValidator().validate(ctx, { id: 'id' })
 	await Note.deleteNote(v.get('path.id'))
-	success()
+	success('删除成功', { ok: 1 })
 })
 
 /**
@@ -122,7 +137,7 @@ router.post('/update', new Auth().m, async ctx => {
 	const v = await new AddNoteValidator().validate(ctx)
 	const newNote = v.get('body')
 	await Note.updateNote(newNote)
-	success('ok');
+	success('文章已更新', { ok: 1 });
 })
 
 /**
@@ -132,7 +147,7 @@ router.get('/:id', async ctx => {
 	const v = await new PositiveIntegerValidator().validate(ctx, { id: 'id' })
 	const id = v.get('path.id')
 	const content = await Note.queryNoteById(id)
-	success('ok', content)
+	success(null, content)
 })
 
 /**
@@ -150,10 +165,14 @@ router.get('/isFavor/:id', new Auth().m, async ctx => {
 	})
 })
 
-router.post('/byTag', async ctx => {
+/**
+ * 按照标签获取文章
+ */
+router.get('/byTag/:id', async ctx => {
 	const v = await new NoteValidator().validate(ctx)
-	const tags = v.get('body')
-	await Note.queryNoteByTag(tags)
+	const tags = v.get('path.id')
+	const data = await Note.queryNoteByTag(tags)
+	success(null, { data })
 })
 
 module.exports = router
