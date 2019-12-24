@@ -5,6 +5,7 @@ import { inject, observer } from 'mobx-react'
 import React from 'react'
 import './style.less'
 import { Redirect } from 'react-router'
+import { Link } from 'react-router-dom'
 import { axios_get } from '../../util/axios'
 
 @inject('userStore')
@@ -52,7 +53,7 @@ class Profile extends React.Component {
 										{this.currUser.userName}
 									</span>
 
-									<button className="btn-edit">编辑</button>
+									<Link to='/setting'><button className="btn-edit">编辑</button></Link>
 								</div>
 
 								<Divider />
@@ -67,9 +68,6 @@ class Profile extends React.Component {
 						<div className="time"><Icon type="user" />您成为本站会员 1 天</div>
 					</div>
 				</div>
-
-				<div className="m-red-title">动态</div>
-
 			</div>
 		)
 	}
