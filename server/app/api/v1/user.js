@@ -38,21 +38,8 @@ router.post('/modify', new Auth().m, async ctx => {
 })
 
 /**
- * 用户所获得的所有点赞总数接口
+ * 用户所获得的所有点赞、收藏、文章总数接口
  */
-router.get('/like', new Auth().m, async ctx => {
-	const total = await User.likeTotal(ctx.auth.uid)
-	success(null, {total})
-})
-
-/**
- * 用户所获得的所有收藏总数接口
- */
-router.get('/collect', new Auth().m, async ctx => {
-	const total = await User.collectTotal(ctx.auth.uid)
-	success(null, {total})
-})
-
 router.get('/status', new Auth().m, async ctx => {
 	const r = await Promise.all([
 		User.likeTotal(ctx.auth.uid),

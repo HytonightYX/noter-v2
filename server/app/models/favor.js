@@ -126,7 +126,6 @@ class Favor extends Model {
 	 * @param artId 文章id
 	 */
 	static async collect(uid, artId) {
-		console.log(uid, artId)
 		const favor = await Favor.findOne({
 			where: {
 				uid: uid,

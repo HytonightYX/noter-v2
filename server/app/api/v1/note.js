@@ -4,6 +4,7 @@ const { AddNoteValidator, NoteValidator, PublishNoteValidator, PositiveIntegerVa
 const { Note } = require('../../models/note')
 const { success } = require('../../lib/helper')
 const { Auth } = require('../../../middlewares/auth')
+const basicAuth = require('basic-auth')
 const dayjs = require('dayjs')
 const multer = require('@koa/multer')
 
@@ -109,7 +110,7 @@ router.get('/delete/:id', new Auth().m, async ctx => {
 router.get('/modify/:id', new Auth().m, async ctx => {
 	const v = await new PositiveIntegerValidator().validate(ctx, { id: 'id' })
 	const content = await Note.modifyNote(v.get('path.id'), ctx.auth.uid)
-	success('开始更改', {content})
+	success('开始更改', { content })
 })
 
 /**
@@ -132,6 +133,28 @@ router.get('/:id', async ctx => {
 	const id = v.get('path.id')
 	const content = await Note.queryNoteById(id)
 	success('ok', content)
+})
+
+/**
+ * 根据文章标签显示文章
+ */
+router.post('/byTag', async ctx => {
+	const v = await new NoteValidator().validate(ctx)
+	const tags = v.get('body')
+	console.log(tags)
+
+})
+
+router.get('/isFavor/:id', new Auth().m, async ctx => {
+	const v = await new PositiveIntegerValidator().validate(ctx, { id: 'id' })
+	const r = await Promise.all([
+		Note.isLike(ctx.auth.uid, v.get('path.id')),
+		Note.isCollect(ctx.auth.uid, v.get('path.id'))
+	])
+	success(null, {
+		like: r[0],
+		collect: r[1]
+	})
 })
 
 module.exports = router

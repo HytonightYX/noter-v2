@@ -204,6 +204,48 @@ class Note extends Model {
 	}
 
 	/**
+	 * 判断文章是否被当前用户点赞
+	 * @param uid 当前登录用户
+	 * @param noteId 文章id
+	 */
+	static async isLike(uid, noteId) {
+		const { Favor } = require('../models/favor')
+		let like = await Favor.findOne({
+			where: {
+				uid: uid,
+				artId: noteId,
+				type: 1
+			}
+		})
+		if (like) {
+			return true
+		} else {
+			return false
+		}
+	}
+
+	/**
+	 * 判断文章是否被当前用户收藏
+	 * @param uid 当前登录用户
+	 * @param noteId 文章id
+	 */
+	static async isCollect(uid, noteId) {
+		const { Favor } = require('../models/favor')
+		let collect = await Favor.findOne({
+			where: {
+				uid: uid,
+				artId: noteId,
+				type: 2
+			}
+		})
+		if (collect) {
+			return true
+		} else {
+			return false
+		}
+	}
+
+	/**
 	 * 获取文章视图公共方法
 	 * @param notes 
 	 */
