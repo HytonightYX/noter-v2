@@ -10,7 +10,7 @@ const { TagAddValidator } = require('../../validators/validator')
  */
 router.get('/', async () => {
 	const tags = await Tag.showTags()
-	success('ok', tags)
+	success(null, tags)
 })
 
 /**
@@ -28,7 +28,7 @@ router.post('/add', new Auth().m, async ctx => {
  */
 router.get('/getAllTags', new Auth().m, async ctx => {
 	const tags = await Tag.showTags()
-	success('ok', tags)
+	success(null, tags)
 })
 
 module.exports = router

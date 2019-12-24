@@ -52,7 +52,7 @@ router.get('/list', async () => {
  */
 router.get('/hot', async () => {
 	const notes = await Note.showHotNotes()
-	success('已更新', notes)
+	success(null, notes)
 })
 
 /**
@@ -90,7 +90,7 @@ router.post('/publish', async ctx => {
 router.get('/search/:title', async ctx => {
 	const v = await new NoteValidator().validate(ctx)
 	const notes = await Note.queryNoteByTitle(v.get('path.title'))
-	success('ok', notes)
+	success(null, notes)
 })
 
 /**
@@ -116,7 +116,7 @@ router.get('/mine', new Auth().m, async ctx => {
 router.get('/delete/:id', new Auth().m, async ctx => {
 	const v = await new PositiveIntegerValidator().validate(ctx, { id: 'id' })
 	await Note.deleteNote(v.get('path.id'))
-	success('删除成功', {ok: 1})
+	success('删除成功', { ok: 1 })
 })
 
 /**
@@ -137,7 +137,7 @@ router.post('/update', new Auth().m, async ctx => {
 	const v = await new AddNoteValidator().validate(ctx)
 	const newNote = v.get('body')
 	await Note.updateNote(newNote)
-	success('ok');
+	success('文章已更新', { ok: 1 });
 })
 
 /**
@@ -147,7 +147,7 @@ router.get('/:id', async ctx => {
 	const v = await new PositiveIntegerValidator().validate(ctx, { id: 'id' })
 	const id = v.get('path.id')
 	const content = await Note.queryNoteById(id)
-	success('ok', content)
+	success(null, content)
 })
 
 /**
@@ -172,7 +172,7 @@ router.get('/byTag/:id', async ctx => {
 	const v = await new NoteValidator().validate(ctx)
 	const tags = v.get('path.id')
 	const data = await Note.queryNoteByTag(tags)
-	success('更新成功', {data})
+	success(null, { data })
 })
 
 module.exports = router

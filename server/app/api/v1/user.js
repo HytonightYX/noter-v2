@@ -31,7 +31,7 @@ router.post('/bind', new Auth().m, async (ctx) => {
  */
 router.get('/info', new Auth().m, async ctx => {
 	const user = await User.getUserInfo(ctx.auth.uid)
-	success('更新成功', user)
+	success('登陆成功', user)
 })
 
 /**
@@ -40,7 +40,7 @@ router.get('/info', new Auth().m, async ctx => {
 router.post('/modify', new Auth().m, async ctx => {
 	const v = await new UserModifyValidator().validate(ctx)
 	await User.modifyInfo(v.get('body'), ctx.auth.uid)
-	success('信息更新成功')
+	success('信息更新成功', {ok: 1})
 })
 
 /**
