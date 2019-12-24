@@ -1,5 +1,5 @@
 import { Icon, Spin } from 'antd'
-import React from 'react'
+import React, { Suspense } from 'react'
 import './style.less'
 import { Link } from 'react-router-dom'
 import { Placeholder } from 'semantic-ui-react'
@@ -125,67 +125,71 @@ class Find extends React.Component {
 		)
 
 		return (
-			<div className="g-find">
-				<div className="m-find-tab">
-					<ul>
-						{FIND_MENU.map(item =>
-							<li key={item.key} onClick={this.doChangeTab}
-							    className={`${currtab === item.key && 'active'}`}
-							>{item.title}</li>
-						)}
-					</ul>
-				</div>
+			<Suspense fallback={<div>Loading...</div>}>
+				<div className="g-find">
+					<div className="m-find-tab">
+						<ul>
+							{FIND_MENU.map(item =>
+								<li key={item.key} onClick={this.doChangeTab}
+								    className={`${currtab === item.key && 'active'}`}
+								>{item.title}</li>
+							)}
+						</ul>
+					</div>
 
-				<div className="m-find">
-					{
-						loading ?
-							<Icon type="loading" style={{fontSize: 48}}/>
-							:
-							<Spin spinning={fetchingNote} indicator={<Icon type="loading" style={{fontSize: 32, color: '#fd281a'}}/>}>
-								{currtab === 'tag' && (
-									<div className="m-tags-wrap">
-										{tagList.map(tag => {
-											return <div className="m-tag" key={'tab' + tag.name} onClick={this.doSearch.bind(this, tag.id)}># <span>{tag.name}</span></div>
-										})}
-									</div>
-								)}
-
-								<div className="note-list">
-									{currtab === 'all' && currNotes.map((item, i) => <NoteCard key={`node-${i}`} note={item}/>)}
-									{currtab === 'tag' && currNotes.map((item, i) => <NoteCard key={`node-${i}`} note={item}/>)}
-									{currNotes.length === 0 && (
-										<div className="no-data">没有更多数据 😯</div>
+					<div className="m-find">
+						{
+							loading ?
+								<Icon type="loading" style={{fontSize: 48}}/>
+								:
+								<Spin spinning={fetchingNote}
+								      indicator={<Icon type="loading" style={{fontSize: 32, color: '#fd281a'}}/>}>
+									{currtab === 'tag' && (
+										<div className="m-tags-wrap">
+											{tagList.map(tag => {
+												return <div className="m-tag" key={'tab' + tag.name}
+												            onClick={this.doSearch.bind(this, tag.id)}># <span>{tag.name}</span></div>
+											})}
+										</div>
 									)}
-								</div>
-							</Spin>
-					}
 
-					<div className="find-right-bar">
-						<div className="title">
-							最热 精选
-						</div>
-
-						<div className="hot-list">
-							{hotList.map(item => (
-								<div className="item" key={'hot-' + item.id}>
-									<div className="avatar">
-										<img src={item.avatar} alt=""/>
+									<div className="note-list">
+										{currtab === 'all' && currNotes.map((item, i) => <NoteCard key={`node-${i}`} note={item}/>)}
+										{currtab === 'tag' && currNotes.map((item, i) => <NoteCard key={`node-${i}`} note={item}/>)}
+										{currNotes.length === 0 && (
+											<div className="no-data">没有更多数据 😯</div>
+										)}
 									</div>
+								</Spin>
+						}
 
-									<div className="info">
-										<div className="item-name">{item.user_name}</div>
-										<Link to={'note/' + item.id}>
-											<span className="item-title">{item.title}</span>
-										</Link>
+						<div className="find-right-bar">
+							<div className="title">
+								最热 · 精选
+							</div>
+
+							<div className="hot-list">
+								{hotList.map(item => (
+									<div className="item" key={'hot-' + item.id}>
+										<div className="avatar">
+											<img src={item.avatar} alt=""/>
+										</div>
+
+										<div className="info">
+											<div className="item-name">{item.user_name}</div>
+											<Link to={'note/' + item.id}>
+												<span className="item-title">{item.title}</span>
+											</Link>
+										</div>
 									</div>
-								</div>
-							))}
+								))}
+							</div>
 						</div>
 					</div>
-				</div>
 
-				<FixedBar/>
-			</div>
+					<FixedBar/>
+				</div>
+			</Suspense>
 		)
 	}
 }
