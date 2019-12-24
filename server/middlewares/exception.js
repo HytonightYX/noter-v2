@@ -2,8 +2,8 @@ const { HttpException } = require('../core/httpException')
 
 /**
  * 全局捕获异常中间件
- * @param ctx 
- * @param next 
+ * @param ctx
+ * @param next
  */
 const catchError = async (ctx, next) => {
 	try {
@@ -23,7 +23,16 @@ const catchError = async (ctx, next) => {
 				data: error.data,
 				message: error.message,
 			}
-			ctx.status = error.code
+
+			switch (error.code) {
+				case 403:
+				case 404:
+					ctx.status = error.code
+					break
+				default:
+					ctx.status = 200
+			}
+
 		} else {
 			ctx.body = {
 				message: '捕获到未知异常:\n' + error.stack,
