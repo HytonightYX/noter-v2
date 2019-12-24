@@ -30,7 +30,7 @@ class Profile extends React.Component {
 
 	render() {
 		const {status} = this.state
-		console.log(this.currUser)
+
 		if (!this.currUser) {
 			message.info('请先登录!', 0.7)
 			return <Redirect to='login' />

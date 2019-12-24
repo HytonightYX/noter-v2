@@ -19,7 +19,7 @@ class Setting extends React.Component {
 			if (!error) {
 				const submitData = {...values}
 
-				console.log(submitData)
+
 
 				this.setState({submitting: true})
 				axios_post('user/modify', submitData)

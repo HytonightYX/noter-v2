@@ -9,10 +9,10 @@ class AuthStore {
 			() => this.token,
 			token => {
 				if (token) {
-					console.log('SET JWT = '+ token)
+
 					window.localStorage.setItem('jwt', token)
 				} else {
-					console.log('CLEAR JWT = ')
+
 					window.localStorage.removeItem('jwt')
 				}
 			}

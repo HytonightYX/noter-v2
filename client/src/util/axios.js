@@ -19,7 +19,6 @@ const axiosIns = axios.create({
 axiosIns.interceptors.request.use(
 	config => {
 		const token = window.localStorage.getItem('token')
-		console.log('userStore.token', token)
 		token && (config.headers.Authorization = encodeJWT(token))
 		return config
 	},
@@ -84,7 +83,6 @@ export const axios_post = (url, data, config = {}) => {
 			resolve(resp_data.data)
 		}).catch(error => {
 			message.error(error.message, 0.7)
-			console.log('axios_post:', error)
 		})
 	})
 }

@@ -7,10 +7,10 @@ class UserStore {
 			() => this.token,
 			token => {
 				if (token) {
-					console.log('SET TOKEN = '+ token)
+
 					window.localStorage.setItem('token', token)
 				} else {
-					console.log('CLEAR TOKEN')
+
 					window.localStorage.removeItem('token')
 				}
 			}
@@ -37,7 +37,7 @@ class UserStore {
 					window.localStorage.setItem('token', data.token)
 					window.location.href = '/'
 				})
-				console.log(data)
+
 			})
 			.finally(() => {
 				runInAction(() => {
@@ -54,7 +54,7 @@ class UserStore {
 				runInAction(() => {
 					this.currUser = data
 					this.loading = false
-					console.log('hahhahah', data)
+
 				})
 			})
 	}

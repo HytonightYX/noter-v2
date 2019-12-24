@@ -1,5 +1,3 @@
-import { Affix, Button } from 'antd'
-import dayjs from 'dayjs'
 import React from 'react'
 import './style.less'
 import { withRouter } from 'react-router'
@@ -25,7 +23,7 @@ class Note extends React.Component {
 		if (token) {
 			axios_get('note/isFavor/' + noteId)
 				.then(data => {
-					console.log('当前状态', data)
+
 					this.setState({status: data})
 				})
 		}
@@ -50,7 +48,7 @@ class Note extends React.Component {
 
 	doCollect = () => {
 		const noteId = this.props.match.params.id
-		console.log('准备收藏', this.state.status)
+
 		const url = `favor/${this.state.status.collect ? 'disCollect' : 'collect'}/${noteId}`
 		axios_get(url)
 			.then(data => {

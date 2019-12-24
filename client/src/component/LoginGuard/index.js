@@ -21,7 +21,7 @@ class LoginGuard extends React.Component {
 			this.props.userStore.login(code)
 		} else if (token) {
 			// 该用户尚未登出, 保持登录状态
-			console.log('该用户尚未登出, 保持登录状态')
+
 			this.props.userStore.loginWithToken()
 		}
 	}

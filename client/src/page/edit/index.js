@@ -4,10 +4,12 @@ import BraftEditor from 'braft-editor'
 import { Form, Input as AntInput, Button, Icon, Select, Spin, message, Upload, Modal } from 'antd'
 import debounce from 'lodash/debounce'
 import { SYSTEM_CONFIG } from '../../constant/config'
-import 'braft-editor/dist/index.css'
-import './style.less'
+
 import { axios_get, axios_post } from '../../util/axios'
 import { getToken } from '../../util/qiniu'
+
+import 'braft-editor/dist/index.css'
+import './style.less'
 
 const {Option} = Select
 const {BASE_QINIU_URL, QINIU_SERVER} = SYSTEM_CONFIG.qiniu
@@ -28,21 +30,21 @@ class Write extends React.Component {
 		fetching: false,
 		submitting: false,
 		qiniuToken: null,
-		note: {}
+		note: {},
+		loading: false
 	}
 
 	async componentDidMount() {
 		const qiniuToken = getToken()
 		const noteId = this.props.match.params.id
-		console.log('did mount 获取qiniu的token', qiniuToken)
 
 		axios_get('note/modify/' + noteId)
 			.then(data => {
-				console.log('文章', data)
+
 				this.props.form.setFieldsValue({
 					content: BraftEditor.createEditorState(data.content.raw),
 				})
-				this.setState({note: data.content, imageHash: data.cover})
+				this.setState({note: data.content, imageHash: data.content.cover})
 			})
 
 		this.setState({qiniuToken})
@@ -67,7 +69,7 @@ class Write extends React.Component {
 		}
 		if (info.file.status === 'done') {
 			this.setState({
-				loading: true,
+				loading: false,
 				imageHash: info.file.response.hash
 			})
 
@@ -95,7 +97,7 @@ class Write extends React.Component {
 				this.setState({submitting: true})
 				axios_post('note/update', submitData)
 					.then(data => {
-						console.log(data)
+
 					})
 					.finally(() => {
 						this.setState({submitting: false})
@@ -148,8 +150,7 @@ class Write extends React.Component {
 
 	render() {
 		const {getFieldDecorator} = this.props.form
-		const {fetching, data, submitting, imageHash, qiniuToken} = this.state
-
+		const {fetching, data, submitting, imageHash, qiniuToken, loading} = this.state
 		const uploadButton = (
 			<div>
 				<Icon type="plus"/>
@@ -172,20 +173,22 @@ class Write extends React.Component {
 							rules: [{required: false, message: '请上传题图'}],
 						})(
 							<div className="upload">
-								<div style={{background: '#666666', width: 600, height: 250, margin: '20px auto 30px'}}>
-									<Upload
-										name="file"
-										listType="picture-card"
-										className="avatar-uploader"
-										showUploadList={false}
-										action={QINIU_SERVER}
-										data={{token: qiniuToken}}
-										beforeUpload={this.getUploadToken}
-										onChange={this.handleChange}
-									>
-										{imageHash ?
-											<img src={BASE_QINIU_URL + imageHash + '?imageslim'} alt="image" style={{width: '100%'}}/> : uploadButton}
-									</Upload>
+								<div style={{margin: '0 auto', textAlign: 'center'}}>
+									<Spin spinning={loading}>
+										<Upload
+											name="file"
+											listType="picture-card"
+											className="avatar-uploader"
+											showUploadList={false}
+											action={QINIU_SERVER}
+											data={{token: qiniuToken}}
+											beforeUpload={this.getUploadToken}
+											onChange={this.handleChange}
+										>
+											{imageHash ?
+												<img src={BASE_QINIU_URL + imageHash + '?imageslim'} alt="image" style={{width: '100%', maxWidth: '600px'}}/> : uploadButton}
+										</Upload>
+									</Spin>
 								</div>
 							</div>
 						)}
