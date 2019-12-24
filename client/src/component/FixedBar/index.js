@@ -1,5 +1,6 @@
 import React from 'react'
 import './style.less'
+import { Icon as SemiIcon } from 'semantic-ui-react'
 import { Icon } from 'antd'
 import { Link } from 'react-router-dom'
 
@@ -20,7 +21,7 @@ export default () => (
 				window.scrollTo(0, 0)
 			}}
 		>
-			<Icon type="arrow-up"/>
+			<SemiIcon name="arrow up"/>
 		</div>
 	</div>
 )

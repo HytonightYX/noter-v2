@@ -3,13 +3,13 @@ import { message } from 'antd'
 import { encodeJWT } from './token'
 
 const BASE_URL = {
-	// development: 'http://172.22.203.129:3030/v1/',
-	development: 'http://localhost:3030/v1/',
-	production: 'http://yunxi.site:3030'
+	// development: 'http://127.0.0.1:3030/v1/',
+	development: 'http://yunxi.site:3030/v1/',
+	production: 'http://yunxi.site:3030/v1/'
 }
 
 const axiosIns = axios.create({
-	timeout: 2000,
+	timeout: 20000,
 	baseURL: BASE_URL[process.env.NODE_ENV]
 })
 
@@ -58,12 +58,13 @@ export const axios_get = (url, params = {}, config = {}) => {
 			resp_data.message && message.success(resp_data.message, 0.7)
 			resolve(resp_data.data)
 		}).catch(error => {
-
 			if (error.response && error.response.status === 403) {
 				message.error('令牌不合法，请登录！', 0.7)
 				setTimeout(() => {
 					window.location.href = '/login'
 				}, 1000)
+			} else if (error.response && error.response.status === 666) {
+				message.error(error.response.data.message, 0.7)
 			} else {
 				message.error(error.message, 0.7)
 			}

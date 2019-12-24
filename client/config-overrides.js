@@ -4,9 +4,11 @@ const {
 	addLessLoader,
 	addDecoratorsLegacy,
 	disableEsLint,
-	addWebpackAlias
+	addWebpackAlias,
+	addBundleVisualizer
 } = require('customize-cra')
 
+const rewireUglifyjs = require('react-app-rewire-uglifyjs')
 const path = require('path')
 
 module.exports = override(
@@ -29,4 +31,13 @@ module.exports = override(
 		'@constant': path.resolve(__dirname, 'src/constant'),
 		'@component': path.resolve(__dirname, 'src/component'),
 	}),
+	// addBundleVisualizer({generateStatsFile: true}),
+	rewireUglifyjs,
+	// used to minimise bundle size by 500KB
+	function(config, env) {
+		const alias = config.resolve.alias || {};
+		alias['@ant-design/icons/lib/dist$'] = path.resolve(__dirname, './src/icons.js');
+		config.resolve.alias = alias;
+		return config;
+	},
 )

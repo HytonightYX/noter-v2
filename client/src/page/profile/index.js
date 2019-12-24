@@ -1,9 +1,11 @@
-import { Divider } from 'antd'
+import { Divider, Icon } from 'antd'
 import { computed } from 'mobx'
+import {message} from 'antd'
 import { inject, observer } from 'mobx-react'
 import React from 'react'
 import './style.less'
 import { Redirect } from 'react-router'
+import { axios_get } from '../../util/axios'
 
 @inject('userStore')
 @observer
@@ -12,7 +14,13 @@ class Profile extends React.Component {
 	state = {
 		data: [],
 		value: [],
-		fetching: false
+		fetching: false,
+		status: {}
+	}
+
+	componentDidMount() {
+		axios_get('user/status')
+			.then(data => this.setState({status: data}))
 	}
 
 	@computed
@@ -21,10 +29,10 @@ class Profile extends React.Component {
 	}
 
 	render() {
+		const {status} = this.state
 		console.log(this.currUser)
-
 		if (!this.currUser) {
-			message.info('请先登录!')
+			message.info('请先登录!', 0.7)
 			return <Redirect to='login' />
 		}
 
@@ -39,7 +47,7 @@ class Profile extends React.Component {
 							</div>
 
 							<div className="user-info">
-								<div>
+								<div className="m-name">
 									<span className="username">
 										{this.currUser.userName}
 									</span>
@@ -49,15 +57,19 @@ class Profile extends React.Component {
 
 								<Divider />
 
-								<span>文章 1 · 被赞 0</span>
+								<div className="m-status">BIO: {this.currUser.desc}</div>
 							</div>
 						</div>
 					</div>
-
 					<div className="right-side">
-						right
+						<div className="title">成就</div>
+						<div className="time"><Icon type="bar-chart" />文章 {status.noteNum} · 被赞 {status.likeNum} · 被收藏 {status.collectNum}</div>
+						<div className="time"><Icon type="user" />您成为本站会员 1 天</div>
 					</div>
 				</div>
+
+				<div className="m-red-title">动态</div>
+
 			</div>
 		)
 	}

@@ -29,7 +29,15 @@ class MyNote extends React.Component {
 	}
 
 	doDel = (nid) => {
-
+		axios_get('note/delete/' + nid)
+			.then(data => {
+				if (data && data.ok === 1) {
+					axios_get('note/mine')
+						.then(data => {
+							this.setState({myNotes: data.notes})
+						})
+				}
+			})
 	}
 
 	render() {
@@ -61,8 +69,8 @@ class MyNote extends React.Component {
 					<div className="note-attr">
 
 						<div className="left">
-							<Link to={`/note/edit/${note.id}`}><span>编辑</span></Link>
-							<span onClick={this.doDel}>删除</span>
+							<Link to={`/edit/${note.id}`}><span>编辑</span></Link>
+							<span onClick={this.doDel.bind(this, note.id)}>删除</span>
 						</div>
 
 						<div className="like">

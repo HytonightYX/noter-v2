@@ -29,6 +29,20 @@
         .user-info {
           width: 100%;
 
+          .m-name {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          .m-status {
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: .1em;
+
+            text-decoration: none;
+          }
+
           .username {
             font-weight: 500;
             font-size: 24px;
@@ -40,8 +54,28 @@
           .btn-edit {
             background: #f5f5f5;
             color: #655e5e;
+            padding: 5px 12px;
+            border-radius: 24px;
+            border: none;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+            font-size: 1rem;
+            text-align: center;
+            letter-spacing: .1em;
+            cursor: pointer;
+            outline: none;
+            -webkit-transition: .1s;
           }
 
+          .btn-edit:hover {
+            background: #fff;
+            color: #292525;
+          }
+
+          .ant-divider-horizontal {
+            margin: 12px auto 24px;
+          }
         }
 
       }
@@ -54,6 +88,26 @@
       top: 110px;
       left: calc(50% + 240px);
       z-index: 99;
+      background: #FFFFFF;
+      height: 130px;
+      width: 251px;
+      padding: 20px;
+
+      .title {
+        font-size: 16px;
+        color: #292525;
+        margin-bottom: 10px;
+        font-weight: 600;
+      }
+
+      .time {
+        color: #292525;
+        font-size: 12px;
+        margin-top: 14px;
+        svg {
+          margin-right: 10px;
+        }
+      }
     }
   }
 }
