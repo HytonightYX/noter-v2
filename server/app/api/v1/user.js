@@ -20,6 +20,12 @@ router.post('/register', async (ctx, next) => {
 	success()
 })
 
+router.post('/bind', new Auth().m, async (ctx) => {
+	const v = await new UserModifyValidator().validate(ctx)
+	await User.setEmailPwd(ctx.auth.uid, v.get('body'))
+	success('绑定成功', {ok: 1})
+})
+
 /**
  * 获取用户信息
  */

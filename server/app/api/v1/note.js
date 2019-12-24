@@ -40,6 +40,14 @@ router.get('/', async () => {
 })
 
 /**
+ * 获取所有文章
+ */
+router.get('/list', async () => {
+	const notes = await Note.showAllNotes(false)
+	success('已更新', notes)
+})
+
+/**
  * 获取最热文章
  */
 router.get('/hot', async () => {
@@ -159,12 +167,12 @@ router.get('/isFavor/:id', new Auth().m, async ctx => {
 
 /**
  * 按照标签获取文章
- * 
  */
-router.post('/byTag', async ctx => {
+router.get('/byTag/:id', async ctx => {
 	const v = await new NoteValidator().validate(ctx)
-	const tags = v.get('body')
-	await Note.queryNoteByTag(tags)
+	const tags = v.get('path.id')
+	const data = await Note.queryNoteByTag(tags)
+	success('更新成功', {data})
 })
 
 module.exports = router

@@ -8,7 +8,7 @@ const { TagAddValidator } = require('../../validators/validator')
 /**
  * 获取所有标签接口
  */
-router.get('/', async ctx => {
+router.get('/', async () => {
 	const tags = await Tag.showTags()
 	success('ok', tags)
 })

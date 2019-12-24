@@ -31,6 +31,22 @@ class User extends Model {
 	}
 
 	/**
+	 * 用户设置邮箱密码
+	 * @param id 用户id
+	 */
+	static async setEmailPwd(id, info) {
+		await User.update({
+			...info
+		},
+		{
+			where: {
+				id: id
+			}
+		})
+	}
+
+
+	/**
 	 * github一键登录
 	 * @param githubId github的用户id
 	 * @param userName github的用户名
@@ -146,7 +162,7 @@ User.init({
 		set(val) {
 			const salt = bcryptjs.genSaltSync(10) // 10 表示生成盐的成本,越高越安全
 			const hashPassword = bcryptjs.hashSync(val, salt)
-			this.setDataValue('password', hashPassword) // this 代表User类
+			this.setDataValue('passwordset', hashPassword) // this 代表User类
 		}
 	},
 	// GitHubId

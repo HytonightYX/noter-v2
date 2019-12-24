@@ -67,15 +67,6 @@ class RegisterValidator extends LinValidator {
 class UserModifyValidator extends LinValidator {
 	constructor() {
 		super()
-		this.email = [
-			new Rule('isEmail', '邮箱填写不符合规范')
-		]
-		this.userName = [
-			new Rule('isLength', '昵称长度为4~32字符', { min: 4, max: 32 })
-		]
-		this.sex = [
-			new Rule('isInt', '性别只有两种', { min: 1, max: 2 })
-		]
 	}
 }
 
