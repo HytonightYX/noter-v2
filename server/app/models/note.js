@@ -49,6 +49,23 @@ class Note extends Model {
 	}
 
 	/**
+	 * 按更新时间降序排序
+	 */
+	static async showHotNotes() {
+		let notes = await db.query(
+			`
+			SELECT u.user_name, u.avatar, n.title,n.tag
+			FROM note n 
+			LEFT JOIN user u ON n.author = u.id
+			order by n.updated_at DESC
+			LIMIT 0,3
+			`
+			, { raw: true })
+		notes = this.common(notes)
+		return notes
+	}
+
+	/**
 	 * 按点赞数目降序排序
 	 */
 	static async showLikedNotes() {
