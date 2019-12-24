@@ -41,7 +41,7 @@ class Note extends Model {
 			SELECT u.user_name, u.avatar, n.*
 			FROM note n 
 			LEFT JOIN user u ON n.author = u.id
-			order by n.updated_at DESC
+			order by n.created_at DESC
 			`
 			, { raw: true })
 		notes = this.common(notes)
@@ -91,7 +91,7 @@ class Note extends Model {
 			FROM note n 
 			LEFT JOIN user u ON n.author = u.id
 			WHERE n.title LIKE '%${title}%'
-			order by n.updated_at DESC
+			order by n.created_at DESC
 			`
 			, { raw: true })
 		notes = this.common(notes)
@@ -109,7 +109,7 @@ class Note extends Model {
 			FROM note n 
 			LEFT JOIN user u ON n.author = u.id
 			WHERE n.author = ${id}
-			order by n.updated_at DESC
+			order by n.created_at DESC
 			`
 			, { raw: true })
 		notes = this.common(notes)
@@ -123,7 +123,7 @@ class Note extends Model {
 	static async queryNoteById(id) {
 		let content = await db.query(
 			`
-			SELECT n.title,n.cover,n.html,n.tag,n.like_num,n.collect_num,u.avatar,n.author,n.updated_at,u.user_name
+			SELECT n.title,n.cover,n.html,n.tag,n.like_num,n.collect_num,u.avatar,n.author,n.created_at,u.user_name
 			FROM note n 
 			LEFT JOIN user u ON n.author = u.id
 			WHERE n.id = ${id}
@@ -131,11 +131,11 @@ class Note extends Model {
 		)
 		content = content[0][0]
 		let tagObj = {}
-		await Tag.findAll({raw: true}).map(item => {
+		await Tag.findAll({ raw: true }).map(item => {
 			tagObj[item.id] = item.name
 		})
 		let tagIds = content.tag.split(',').map(item => {
-			return {id: item, name: tagObj[item]}
+			return { id: item, name: tagObj[item] }
 		})
 		content.tag = tagIds
 		return content
@@ -190,6 +190,7 @@ class Note extends Model {
 	 * @param note 文章实体 
 	 */
 	static async updateNote(note) {
+		console.log(note)
 		const oldNote = Note.findByPk(note.id)
 		if (!oldNote) {
 			throw new global.errs.NotFound()
@@ -243,6 +244,22 @@ class Note extends Model {
 		} else {
 			return false
 		}
+	}
+
+	static async queryNoteByTag(tag) {
+		let data = {}
+		let notes = await db.query(
+			`
+			SELECT u.user_name, u.avatar, n.*
+			FROM note n 
+			LEFT JOIN user u ON n.author = u.id
+			order by n.created_at DESC
+			`
+			, { raw: true })
+		notes = notes[0]
+		notes = notes.map(item => {
+
+		})
 	}
 
 	/**

@@ -136,15 +136,8 @@ router.get('/:id', async ctx => {
 })
 
 /**
- * 根据文章标签显示文章
+ * 判断用户是否对此文章点赞接口
  */
-router.post('/byTag', async ctx => {
-	const v = await new NoteValidator().validate(ctx)
-	const tags = v.get('body')
-	console.log(tags)
-
-})
-
 router.get('/isFavor/:id', new Auth().m, async ctx => {
 	const v = await new PositiveIntegerValidator().validate(ctx, { id: 'id' })
 	const r = await Promise.all([
@@ -155,6 +148,12 @@ router.get('/isFavor/:id', new Auth().m, async ctx => {
 		like: r[0],
 		collect: r[1]
 	})
+})
+
+router.post('/byTag', async ctx => {
+	const v = await new NoteValidator().validate(ctx)
+	const tags = v.get('body')
+	await Note.queryNoteByTag(tags)
 })
 
 module.exports = router
