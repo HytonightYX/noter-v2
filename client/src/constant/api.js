@@ -1,7 +1,7 @@
 import { SYSTEM_CONFIG } from '../constant/config'
 
-// export const API_BASE = "http://127.0.0.1:8080/"
-export const API_BASE = 'http://172.22.203.70:3030/v1/'
+export const API_BASE = "http://127.0.0.1:3030/"
+// export const API_BASE = 'http://172.22.203.70:3030/v1/'
 const _api = (endpoint) => API_BASE + endpoint
 
 const CLIENT_ID = SYSTEM_CONFIG.github.client_id

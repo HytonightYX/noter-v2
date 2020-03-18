@@ -37,7 +37,6 @@ class UserStore {
 					window.localStorage.setItem('token', data.token)
 					window.location.href = '/'
 				})
-
 			})
 			.finally(() => {
 				runInAction(() => {
@@ -54,7 +53,6 @@ class UserStore {
 				runInAction(() => {
 					this.currUser = data
 					this.loading = false
-
 				})
 			})
 	}

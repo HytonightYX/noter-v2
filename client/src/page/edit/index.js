@@ -1,22 +1,22 @@
 import { inject, observer } from 'mobx-react'
-import * as React from 'react'
+import React from 'react'
 import BraftEditor from 'braft-editor'
 import { Form, Input as AntInput, Button, Icon, Select, Spin, message, Upload, Modal } from 'antd'
 import debounce from 'lodash/debounce'
+import { withRouter } from 'react-router'
 import { SYSTEM_CONFIG } from '../../constant/config'
 
 import { axios_get, axios_post } from '../../util/axios'
-import { getToken } from '../../util/qiniu'
-
 import 'braft-editor/dist/index.css'
 import './style.less'
 
-const {Option} = Select
-const {BASE_QINIU_URL, QINIU_SERVER} = SYSTEM_CONFIG.qiniu
+const { Option } = Select
+const { BASE_QINIU_URL, QINIU_SERVER } = SYSTEM_CONFIG.qiniu
 
 @Form.create()
 @inject()
 @observer
+@withRouter
 class Write extends React.Component {
 	constructor(props) {
 		super(props)
@@ -35,36 +35,42 @@ class Write extends React.Component {
 	}
 
 	async componentDidMount() {
-		const qiniuToken = getToken()
+		axios_post('token/qiniu').then((data) => {
+			this.setState({
+				qiniuToken: data.token
+			}, () => {
+				console.log('fdskjl', this.state)
+			})
+		})
+
 		const noteId = this.props.match.params.id
 
 		axios_get('note/modify/' + noteId)
 			.then(data => {
-
 				this.props.form.setFieldsValue({
 					content: BraftEditor.createEditorState(data.content.raw),
 				})
-				this.setState({note: data.content, imageHash: data.content.cover})
+				this.setState({ note: data.content, imageHash: data.content.cover })
 			})
 
-		this.setState({qiniuToken})
+		this.setState({ qiniuToken })
 	}
 
 	fetchUser = () => {
-		this.setState({data: [], fetching: true})
+		this.setState({ data: [], fetching: true })
 		axios_get('tag')
 			.then(body => {
 				const data = body.map(tag => ({
 					text: tag.name,
 					value: tag.id,
 				}))
-				this.setState({data, fetching: false})
+				this.setState({ data, fetching: false })
 			})
 	}
 
 	handleChange = info => {
 		if (info.file.status === 'uploading') {
-			this.setState({loading: true})
+			this.setState({ loading: true })
 			return
 		}
 		if (info.file.status === 'done') {
@@ -94,23 +100,20 @@ class Write extends React.Component {
 					id: noteId
 				}
 
-				this.setState({submitting: true})
+				this.setState({ submitting: true })
 				axios_post('note/update', submitData)
 					.then(data => {
-
+						setTimeout(() => {
+							this.props.history.push('/')
+						}, 500)
 					})
 					.finally(() => {
-						this.setState({submitting: false})
+						this.setState({ submitting: false })
 					})
 			} else {
 				message.error('提交发生错误')
 			}
 		})
-	}
-
-	getUploadToken = () => {
-		const qiniuToken = getToken()
-		this.setState({qiniuToken})
 	}
 
 	myUploadFn = (param) => {
@@ -137,10 +140,10 @@ class Write extends React.Component {
 			})
 		}
 
-		xhr.upload.addEventListener("progress", progressFn, false)
-		xhr.addEventListener("load", successFn, false)
-		xhr.addEventListener("error", errorFn, false)
-		xhr.addEventListener("abort", errorFn, false)
+		xhr.upload.addEventListener('progress', progressFn, false)
+		xhr.addEventListener('load', successFn, false)
+		xhr.addEventListener('error', errorFn, false)
+		xhr.addEventListener('abort', errorFn, false)
 
 		fd.append('file', param.file)
 		fd.append('token', token)
@@ -149,11 +152,11 @@ class Write extends React.Component {
 	}
 
 	render() {
-		const {getFieldDecorator} = this.props.form
-		const {fetching, data, submitting, imageHash, qiniuToken, loading} = this.state
+		const { getFieldDecorator } = this.props.form
+		const { fetching, data, submitting, imageHash, qiniuToken, loading } = this.state
 		const uploadButton = (
 			<div>
-				<Icon type="plus"/>
+				<Icon type="plus" />
 				<div className="ant-upload-text">上传题图</div>
 			</div>
 		)
@@ -168,12 +171,12 @@ class Write extends React.Component {
 			<div className="g-edit">
 
 				<Form onSubmit={this.handleSubmit} className="m-form">
-					<Form.Item style={{marginBottom: 0}}>
+					<Form.Item style={{ marginBottom: 0 }}>
 						{getFieldDecorator('cover', {
-							rules: [{required: false, message: '请上传题图'}],
+							rules: [{ required: false, message: '请上传题图' }],
 						})(
 							<div className="upload">
-								<div style={{margin: '0 auto', textAlign: 'center'}}>
+								<div style={{ margin: '0 auto', textAlign: 'center' }}>
 									<Spin spinning={loading}>
 										<Upload
 											name="file"
@@ -181,12 +184,12 @@ class Write extends React.Component {
 											className="avatar-uploader"
 											showUploadList={false}
 											action={QINIU_SERVER}
-											data={{token: qiniuToken}}
-											beforeUpload={this.getUploadToken}
+											data={{ token: qiniuToken }}
 											onChange={this.handleChange}
 										>
 											{imageHash ?
-												<img src={BASE_QINIU_URL + imageHash + '?imageslim'} alt="image" style={{width: '100%', maxWidth: '600px'}}/> : uploadButton}
+												<img src={BASE_QINIU_URL + imageHash + '?imageslim'} alt="image"
+													style={{ width: '100%', maxWidth: '600px' }} /> : uploadButton}
 										</Upload>
 									</Spin>
 								</div>
@@ -194,9 +197,9 @@ class Write extends React.Component {
 						)}
 					</Form.Item>
 
-					<Form.Item style={{marginBottom: 5}}>
+					<Form.Item style={{ marginBottom: 5 }}>
 						{getFieldDecorator('title', {
-							rules: [{required: true, message: '请输入标题'}],
+							rules: [{ required: true, message: '请输入标题' }],
 							initialValue: this.state.note.title
 						})(
 							<AntInput
@@ -239,10 +242,10 @@ class Write extends React.Component {
 								mode="multiple"
 								labelInValue
 								placeholder="选择标签..."
-								notFoundContent={fetching ? <Spin size="small"/> : null}
+								notFoundContent={fetching ? <Spin size="small" /> : null}
 								filterOption={false}
 								onSearch={this.fetchUser}
-								style={{width: '400px'}}
+								style={{ width: '400px' }}
 							>
 								{data.map(d => (
 									<Option key={d.value}>{d.text}</Option>

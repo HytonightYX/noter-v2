@@ -7,11 +7,11 @@ import { Provider } from 'mobx-react'
 
 import { configure } from 'mobx'
 
-configure({enforceActions: 'observed'})
+configure({ enforceActions: 'observed' })
 
 ReactDOM.render(
 	<Provider {...injects}>
-		<App/>
+		<App />
 	</Provider>,
 	document.getElementById('root')
 )

@@ -1,5 +1,5 @@
 import { inject, observer } from 'mobx-react'
-import * as React from 'react'
+import React from 'react'
 import BraftEditor from 'braft-editor'
 import { Form, Input as AntInput, Button, Icon, Select, Spin, message, Upload, Modal } from 'antd'
 import debounce from 'lodash/debounce'
@@ -7,10 +7,9 @@ import { SYSTEM_CONFIG } from '../../constant/config'
 import 'braft-editor/dist/index.css'
 import './style.less'
 import { axios_get, axios_post } from '../../util/axios'
-import { getToken } from '../../util/qiniu'
 
-const {Option} = Select
-const {BASE_QINIU_URL, QINIU_SERVER} = SYSTEM_CONFIG.qiniu
+const { Option } = Select
+const { BASE_QINIU_URL, QINIU_SERVER } = SYSTEM_CONFIG.qiniu
 
 @Form.create()
 @inject()
@@ -31,27 +30,31 @@ class Write extends React.Component {
 		loading: false
 	}
 
-	componentDidMount() {
-		const qiniuToken = getToken()
-
-		this.setState({qiniuToken})
+	async componentDidMount() {
+		axios_post('token/qiniu').then((data) => {
+			this.setState({
+				qiniuToken: data.token
+			}, () => {
+				console.log('fdskjl', this.state)
+			})
+		})
 	}
 
 	fetchUser = () => {
-		this.setState({data: [], fetching: true})
+		this.setState({ data: [], fetching: true })
 		axios_get('tag')
 			.then(body => {
 				const data = body.map(tag => ({
 					text: tag.name,
 					value: tag.id,
 				}))
-				this.setState({data, fetching: false})
+				this.setState({ data, fetching: false })
 			})
 	}
 
 	handleChange = info => {
 		if (info.file.status === 'uploading') {
-			this.setState({loading: true})
+			this.setState({ loading: true })
 			return
 		}
 		if (info.file.status === 'done') {
@@ -80,23 +83,18 @@ class Write extends React.Component {
 					status: 2
 				}
 
-				this.setState({submitting: true})
+				this.setState({ submitting: true })
 				axios_post('note/add', submitData)
 					.then(data => {
 
 					})
 					.finally(() => {
-						this.setState({submitting: false})
+						this.setState({ submitting: false })
 					})
 			} else {
 				message.error('提交发生错误')
 			}
 		})
-	}
-
-	getUploadToken = () => {
-		const qiniuToken = getToken()
-		this.setState({qiniuToken})
 	}
 
 	myUploadFn = (param) => {
@@ -135,12 +133,12 @@ class Write extends React.Component {
 	}
 
 	render() {
-		const {getFieldDecorator} = this.props.form
-		const {fetching, data, submitting, imageHash, qiniuToken, loading} = this.state
+		const { getFieldDecorator } = this.props.form
+		const { fetching, data, submitting, imageHash, qiniuToken, loading } = this.state
 
 		const uploadButton = (
 			<div>
-				<Icon type="plus"/>
+				<Icon type="plus" />
 				<div className="ant-upload-text">上传题图</div>
 			</div>
 		)
@@ -155,12 +153,12 @@ class Write extends React.Component {
 			<div className="g-write">
 
 				<Form onSubmit={this.handleSubmit} className="m-form">
-					<Form.Item style={{marginBottom: 0}}>
+					<Form.Item style={{ marginBottom: 0 }}>
 						{getFieldDecorator('cover', {
-							rules: [{required: false, message: '请上传题图'}],
+							rules: [{ required: false, message: '请上传题图' }],
 						})(
 							<div className="upload">
-								<div style={{margin: '0 auto', textAlign: 'center'}}>
+								<div style={{ margin: '0 auto', textAlign: 'center' }}>
 									<Spin spinning={loading}>
 										<Upload
 											name="file"
@@ -168,12 +166,11 @@ class Write extends React.Component {
 											className="avatar-uploader"
 											showUploadList={false}
 											action={QINIU_SERVER}
-											data={{token: qiniuToken}}
-											beforeUpload={this.getUploadToken}
+											data={{ token: qiniuToken }}
 											onChange={this.handleChange}
 										>
 											{imageHash ?
-												<img src={BASE_QINIU_URL + imageHash + '?imageslim'} alt="image" style={{width: '100%'}}/> : uploadButton}
+												<img src={BASE_QINIU_URL + imageHash + '?imageslim'} alt="image" style={{ width: '100%' }} /> : uploadButton}
 										</Upload>
 									</Spin>
 								</div>
@@ -181,9 +178,9 @@ class Write extends React.Component {
 						)}
 					</Form.Item>
 
-					<Form.Item style={{marginBottom: 5}}>
+					<Form.Item style={{ marginBottom: 5 }}>
 						{getFieldDecorator('title', {
-							rules: [{required: true, message: '请输入标题'}],
+							rules: [{ required: true, message: '请输入标题' }],
 							initialValue: ''
 						})(
 							<AntInput
@@ -227,10 +224,10 @@ class Write extends React.Component {
 								mode="multiple"
 								labelInValue
 								placeholder="选择标签..."
-								notFoundContent={fetching ? <Spin size="small"/> : null}
+								notFoundContent={fetching ? <Spin size="small" /> : null}
 								filterOption={false}
 								onSearch={this.fetchUser}
-								style={{width: '400px'}}
+								style={{ width: '400px' }}
 							>
 								{data.map(d => (
 									<Option key={d.value}>{d.text}</Option>

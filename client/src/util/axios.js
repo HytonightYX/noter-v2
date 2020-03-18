@@ -3,8 +3,7 @@ import { message } from 'antd'
 import { encodeJWT } from './token'
 
 const BASE_URL = {
-	// development: 'http://127.0.0.1:3030/v1/',
-	development: 'http://yunxi.site:3030/v1/',
+	development: 'http://localhost:3030/v1/',
 	production: 'http://yunxi.site:3030/v1/'
 }
 

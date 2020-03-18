@@ -1,9 +1,9 @@
 export {
-	ArrowUpOutline,
-	EditOutline,
-	UserOutline,
-	PlusOutline,
-	LoadingOutline,
-	GithubOutline,
-	BarChartOutline,
+  ArrowUpOutlined,
+  EditOutlined,
+  UserOutlined,
+  PlusOutlined,
+  LoadingOutlined,
+  GithubOutlined,
+  BarChartOutlined,
 } from '@ant-design/icons/lib/index.es'
