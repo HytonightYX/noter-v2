@@ -111,7 +111,7 @@ class Note extends Model {
 
 	/**
 	 * 按标题搜索文章（模糊查询），按更新时间降序排序
-	 * @param title 
+	 * @param title
 	 */
 	static async queryNoteByTitle(title) {
 		let notes = await db.query(
@@ -129,7 +129,7 @@ class Note extends Model {
 
 	/**
 	 * 查询用户所有文章，降序排序
-	 * @param id 用户ID 
+	 * @param id 用户ID
 	 */
 	static async queryNoteByAuthor(id) {
 		let notes = await db.query(
@@ -147,7 +147,7 @@ class Note extends Model {
 
 	/**
 	 * 查询文章详情
-	 * @param id 
+	 * @param id
 	 */
 	static async queryNoteById(id) {
 		let content = await db.query(
@@ -204,7 +204,8 @@ class Note extends Model {
 	 */
 	static async modifyNote(noteId, id) {
 		const content = await Note.findByPk(noteId, {
-			attributes: { exclude: ['html'] }
+			attributes: { exclude: ['html'] },
+			raw: true
 		})
 		if (!content) {
 			throw new global.errs.NotFound('文章不存在')
@@ -216,7 +217,7 @@ class Note extends Model {
 
 	/**
 	 * 更新文章
-	 * @param note 文章实体 
+	 * @param note 文章实体
 	 */
 	static async updateNote(note) {
 		const oldNote = Note.findByPk(note.id)
@@ -300,7 +301,7 @@ class Note extends Model {
 
 	/**
 	 * 获取文章视图公共方法
-	 * @param notes 
+	 * @param notes
 	 */
 	static async common(notes) {
 		let tagObj = {}

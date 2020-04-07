@@ -14,7 +14,7 @@ app.use(catchError)
 
 InitManager.initCore(app)
 
-if (global.config.env === 'dev') {}
+if (global.config.env === 'dev') { }
 
-app.listen(3030, () => {})
+app.listen(3030, () => { })
 

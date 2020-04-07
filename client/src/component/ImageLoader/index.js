@@ -3,7 +3,7 @@ import './style.less'
 
 const _loaded = {}
 
-class ImageLoader extends React.Component {
+class ImageLoader extends React.PureComponent {
 
 	state = {
 		loaded: false
@@ -17,12 +17,12 @@ class ImageLoader extends React.Component {
 
 	onLoad = () => {
 		_loaded[this.props.src] = true
-		this.setState(() => ({loaded: true}))
+		this.setState(() => ({ loaded: true }))
 	}
 
 	render() {
 
-		let {className, loadedClassName, loadingClassName} = this.props
+		let { className, loadedClassName, loadingClassName } = this.props
 
 		className = `${className} ${this.state.loaded
 			? loadedClassName

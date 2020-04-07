@@ -13,9 +13,11 @@ module.exports = {
 		expiresIn: 60 * 60 * 24 * 30,   // 令牌过期时间 一个月
 	},
 	github: {
-		client_id: 'af0e6151dbd9588a9e66',
+		// client_id: '907e089d8acd7d59d6ea',
+		client_id: '00d361bef1a3c27055fd',
 		scope: 'user:email',
-		client_secret: '4b0ae67ca84bacbe8d8a505c1e2064cdf5bd030a'
+		// client_secret: '92a7d98f5aa002ec45f5bfac5e97edcf714c5afe'
+		client_secret: '9a7efb5b81836dbf6863cff95aff47d2e746110d'
 	},
 	wx: {
 		appId: 'wx55b5e6eac0880945',

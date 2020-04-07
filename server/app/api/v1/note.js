@@ -125,6 +125,7 @@ router.get('/delete/:id', new Auth().m, async ctx => {
 router.get('/modify/:id', new Auth().m, async ctx => {
 	const v = await new PositiveIntegerValidator().validate(ctx, { id: 'id' })
 	const content = await Note.modifyNote(v.get('path.id'), ctx.auth.uid)
+
 	success('开始更改', { content })
 })
 

@@ -12,7 +12,8 @@ export const FIND_MENU = [
 
 export const SYSTEM_CONFIG = {
 	github: {
-		client_id: '907e089d8acd7d59d6ea',
+		// client_id: '907e089d8acd7d59d6ea',
+		client_id: '00d361bef1a3c27055fd',
 		scope: 'user:email'
 	},
 	qiniu: {
